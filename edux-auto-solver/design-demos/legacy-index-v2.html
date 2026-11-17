@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EDUX ULTIMATE LIFEFORM - All-in-One Dashboard</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
+              950: '#1e1b4b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #060913;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.12) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.08) 0px, transparent 50%);
+      background-attachment: fixed;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090d16;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #273549;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3b82f6;
+    }
+    .glass-panel {
+      background: rgba(13, 19, 33, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-panel:hover {
+      border-color: rgba(99, 102, 241, 0.35);
+    }
+    .badge-slide {
+      background: rgba(37, 99, 235, 0.18);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.45);
+    }
+    .badge-ai {
+      background: rgba(147, 51, 234, 0.18);
+      color: #c084fc;
+      border: 1px solid rgba(168, 85, 247, 0.45);
+    }
+    .badge-normal {
+      background: rgba(234, 88, 12, 0.18);
+      color: #fb923c;
+      border: 1px solid rgba(249, 115, 22, 0.45);
+    }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+  <!-- TOP APP HEADER -->
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/30 ring-1 ring-white/20">
+          <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-base font-extrabold tracking-tight bg-gradient-to-r from-white via-indigo-100 to-cyan-300 bg-clip-text text-transparent">
+              EDUX ULTIMATE LIFEFORM
+            </h1>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-indigo-300 border border-indigo-500/30">
+              ALL-IN-ONE HUB
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-400">CMCU LMS Realtime Autonomous Agent</p>
+        </div>
+      </div>
+
+      <!-- Realtime Status Badges -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <!-- Chrome Connection -->
+        <div class="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs shadow-inner">
+          <span id="chrome-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50 animate-pulse"></span>
+          <span class="text-slate-400 hidden sm:inline">Chrome:</span>
+          <span class="font-semibold text-emerald-400" id="chrome-status-text">Cổng 9222</span>
+        </div>
+
+        <!-- Current Subject -->
+        <div class="hidden lg:flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs max-w-xs truncate">
+          <i data-lucide="book-open" class="w-3.5 h-3.5 text-cyan-400 shrink-0"></i>
+          <span class="text-cyan-300 truncate font-semibold" id="subject-name-text">Chưa nhận diện môn</span>
+        </div>
+
+        <!-- Question Cache -->
+        <div class="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs cursor-pointer hover:border-amber-500/50 transition group" onclick="openModal('modal-cache')" title="Bấm để xem chi tiết bộ nhớ cache">
+          <i data-lucide="database" class="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition"></i>
+          <span class="text-slate-400 hidden sm:inline">Cache:</span>
+          <span class="font-semibold text-amber-400" id="cache-count-text">0 câu</span>
+        </div>
+
+        <!-- Settings Modal Trigger -->
+        <button onclick="openModal('modal-settings')" title="Cài đặt Gemini AI" class="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 transition active:scale-95">
+          <i data-lucide="settings-2" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-5">
+
+    <!-- ===================================================================== -->
+    <!-- REALTIME PROGRESS & ACTIVE TASK MONITOR -->
+    <!-- ===================================================================== -->
+    <div id="progress-monitor-card" class="glass-panel rounded-3xl p-5 relative overflow-hidden transition-all duration-300 shadow-2xl">
+      <div class="absolute -right-16 -top-16 w-56 h-56 bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Top Row: Task Title & Status Badges -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
+        <div class="flex items-center space-x-3">
+          <div id="status-icon-box" class="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+            <i data-lucide="activity" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <span id="task-state-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-800 text-slate-400 border border-slate-700">
+                SẴN SÀNG
+              </span>
+              <span id="task-timer-text" class="text-xs text-slate-400 font-mono">00:00s</span>
+            </div>
+            <h2 id="current-task-title" class="text-base font-extrabold text-white mt-1">
+              Chưa có tác vụ nào đang chạy
+            </h2>
+          </div>
+        </div>
+
+        <!-- Stop Button -->
+        <div class="flex items-center space-x-2">
+          <button id="btn-stop-task" onclick="stopAction()" class="px-4 py-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500 hover:text-white text-xs font-bold transition flex items-center space-x-1.5 active:scale-95 disabled:opacity-40 disabled:pointer-events-none" disabled>
+            <i data-lucide="square" class="w-3.5 h-3.5 fill-current"></i>
+            <span>Dừng tác vụ</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Progress Bar Section -->
+      <div class="mt-3 space-y-1.5">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-400 font-medium">TIẾN ĐỘ THỰC THI</span>
+          <span id="progress-percent-label" class="font-extrabold text-indigo-400 font-mono text-sm">0%</span>
+        </div>
+
+        <div class="w-full bg-slate-950/80 rounded-full h-2.5 overflow-hidden border border-slate-800/80 p-0.5">
+          <div id="progress-bar-fill" class="bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400 h-full rounded-full transition-all duration-300 w-0 shadow-lg shadow-indigo-500/50"></div>
+        </div>
+
+        <div class="flex justify-between items-center text-[11px] text-slate-400 pt-0.5">
+          <span id="step-detail-label" class="font-medium text-slate-300">Sẵn sàng nhận lệnh từ hệ thống</span>
+          <span id="question-ratio-text" class="font-mono text-slate-400">(0 / 0)</span>
+        </div>
+      </div>
+
+      <!-- 4-Stage Autonomous Pipeline Visualization -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-4 pt-3 border-t border-slate-800/80 text-xs">
+        <div id="pipeline-step-1" class="p-2 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center space-x-2 transition-all duration-300">
+          <span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
+          <span class="text-slate-400 font-medium truncate">1. Quét đề bài & Ảnh</span>
+        </div>
+        <div id="pipeline-step-2" class="p-2 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center space-x-2 transition-all duration-300">
+          <span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
+          <span class="text-slate-400 font-medium truncate">2. AI Coding CLI (Antigravity/Codex)</span>
+        </div>
+        <div id="pipeline-step-3" class="p-2 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center space-x-2 transition-all duration-300">
+          <span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
+          <span class="text-slate-400 font-medium truncate">3. Tích chọn DOM</span>
+        </div>
+        <div id="pipeline-step-4" class="p-2 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center space-x-2 transition-all duration-300">
+          <span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
+          <span class="text-slate-400 font-medium truncate">4. Rà soát & Nộp bài</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- QUICK ACTIONS TOOLBAR (ĐIỀU KHIỂN NHANH) -->
+    <!-- ===================================================================== -->
+    <div class="glass-panel rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex flex-wrap items-center gap-2.5">
+        <!-- Button 1: Giai bai dang mo -->
+        <button onclick="triggerSolveCurrent()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-xs shadow-md shadow-emerald-500/20 transition-all active:scale-95 flex items-center space-x-1.5">
+          <i data-lucide="zap" class="w-4 h-4"></i>
+          <span>Giải bài đang mở (AI CLI)</span>
+        </button>
+
+        <!-- Button 2: Chay slide dang mo -->
+        <button onclick="triggerSlideRun()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all active:scale-95 flex items-center space-x-1.5">
+          <i data-lucide="presentation" class="w-4 h-4"></i>
+          <span>Chạy Slide (CMCU-Vạn-Năng V3.2 FIX)</span>
+        </button>
+
+        <!-- Slide Engine Badge -->
+        <div class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs">
+          <span class="text-slate-400">Engine:</span>
+          <select id="slide-speed-select" class="bg-transparent text-cyan-400 font-bold focus:outline-none cursor-pointer">
+            <option value="0.25" class="bg-slate-900 text-white">⚡ CMCU-Vạn-Năng V3.2 FIX (3/3 Confirm)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <button onclick="toggleExtraInputs()" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 text-xs font-semibold flex items-center space-x-1.5 transition">
+          <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5 text-slate-400"></i>
+          <span>Tùy chọn phụ (URL / Khoảng câu)</span>
+        </button>
+        <button onclick="refreshCourseTable()" class="px-3.5 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs flex items-center space-x-1.5 transition shadow-sm shadow-cyan-600/30">
+          <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+          <span>Quét lại môn</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Collapsible Secondary Utilities: Range & Direct URL -->
+    <div id="extra-inputs-panel" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="glass-panel rounded-2xl p-3.5 flex flex-col justify-between">
+        <div class="flex items-center space-x-2 mb-2">
+          <i data-lucide="sliders" class="w-4 h-4 text-amber-400"></i>
+          <h4 class="text-xs font-bold text-white">Giải chỉ định từ câu X đến câu Y</h4>
+        </div>
+        <div class="flex items-center space-x-2">
+          <div class="flex items-center space-x-1 bg-slate-950 rounded-lg px-2.5 py-1.5 border border-slate-800 text-xs flex-1">
+            <span class="text-slate-400">Từ:</span>
+            <input type="number" id="range-start" value="1" min="1" class="w-full bg-transparent text-white font-mono focus:outline-none">
+          </div>
+          <div class="flex items-center space-x-1 bg-slate-950 rounded-lg px-2.5 py-1.5 border border-slate-800 text-xs flex-1">
+            <span class="text-slate-400">Đến:</span>
+            <input type="number" id="range-end" value="20" min="1" class="w-full bg-transparent text-white font-mono focus:outline-none">
+          </div>
+          <button onclick="triggerSolveRange()" class="px-4 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs transition">Giải</button>
+        </div>
+      </div>
+
+      <div class="glass-panel rounded-2xl p-3.5 flex flex-col justify-between">
+        <div class="flex items-center space-x-2 mb-2">
+          <i data-lucide="link" class="w-4 h-4 text-blue-400"></i>
+          <h4 class="text-xs font-bold text-white">Dán trực tiếp Link bài tập (URL)</h4>
+        </div>
+        <div class="flex items-center space-x-2">
+          <input type="text" id="direct-url-input" placeholder="https://edux.cmcu.edu.vn/subject?id=..." class="flex-1 bg-slate-950 rounded-lg px-3 py-1.5 border border-slate-800 text-xs text-white focus:outline-none focus:border-blue-500 font-mono">
+          <button onclick="triggerSolveUrl()" class="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition">Đi tới & Giải</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- CENTRAL FEATURE: GIAO DIỆN BẢNG BÀI HỌC GỌN GÀNG (TỐI ƯU 1 DÒNG / CHAPTER) -->
+    <!-- ===================================================================== -->
+    <div class="glass-panel rounded-3xl p-5 relative overflow-hidden shadow-2xl space-y-3.5">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400">
+            <i data-lucide="layers" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-white flex items-center space-x-2">
+              <span>Bảng danh sách Chương & Bài học môn</span>
+              <span id="course-total-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-cyan-300 border border-slate-700">0 chương</span>
+            </h3>
+            <p class="text-xs text-slate-400">Mỗi chương hiển thị đầy đủ Slide, Bài tập AI và Bài tập trên cùng 1 hàng</p>
+          </div>
+        </div>
+
+        <!-- Filters & View Switch -->
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <!-- View Modes -->
+          <button onclick="setViewMode('grouped')" id="btn-view-grouped" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold transition shadow-sm shadow-indigo-600/30 flex items-center space-x-1">
+            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+            <span>Gọn theo Chương</span>
+          </button>
+          <button onclick="setViewMode('all_flat')" id="btn-view-flat" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition flex items-center space-x-1">
+            <i data-lucide="list" class="w-3.5 h-3.5"></i>
+            <span>Chi tiết từng mục</span>
+          </button>
+
+          <!-- Type Filters -->
+          <button onclick="filterCourseTable('ai')" id="btn-filter-ai" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-purple-500/30 text-purple-300 hover:bg-purple-900/30 font-semibold transition flex items-center space-x-1.5">
+            <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+            <span>Chỉ Bài tập AI</span>
+          </button>
+          <button onclick="filterCourseTable('manual')" id="btn-filter-manual" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-orange-500/30 text-orange-300 hover:bg-orange-900/30 font-semibold transition flex items-center space-x-1.5">
+            <span class="w-2 h-2 rounded-full bg-orange-400"></span>
+            <span>Chỉ Bài tập</span>
+          </button>
+          <button onclick="filterCourseTable('slide')" id="btn-filter-slide" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-blue-500/30 text-blue-300 hover:bg-blue-900/30 font-semibold transition flex items-center space-x-1.5">
+            <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+            <span>Chỉ Slide</span>
+          </button>
+
+          <!-- Search Input -->
+          <div class="relative ml-auto">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-500 absolute left-3 top-2.5"></i>
+            <input type="text" id="course-search-input" oninput="searchCourseTable(this.value)" placeholder="Tìm kiếm chương / tuần..." class="bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-500 w-44 sm:w-52 font-medium">
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Curriculum Table -->
+      <div class="overflow-x-auto max-h-[500px] overflow-y-auto rounded-2xl border border-slate-800/80">
+        <table class="w-full text-left text-xs text-slate-300">
+          <thead class="text-slate-400 uppercase bg-slate-950 sticky top-0 font-bold tracking-wider border-b border-slate-800 z-10" id="table-head">
+            <!-- Dynamic header depending on view mode -->
+          </thead>
+          <tbody id="course-table-body" class="divide-y divide-slate-800/60 font-medium">
+            <tr>
+              <td colspan="6" class="p-8 text-center text-slate-400">
+                <div class="flex flex-col items-center justify-center space-y-2">
+                  <div class="w-8 h-8 rounded-full border-2 border-cyan-500 border-t-transparent animate-spin"></div>
+                  <p class="text-xs">Đang quét cấu trúc môn học trên Chrome...</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- DUAL BOTTOM SECTION: ACTIVITY HISTORY & TERMINAL STREAM -->
+    <!-- ===================================================================== -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+      <!-- LEFT: ACTIVITY & SCORE HISTORY (LỊCH SỬ HOẠT ĐỘNG & BẢNG ĐIỂM) -->
+      <div class="glass-panel rounded-3xl p-5 flex flex-col justify-between shadow-2xl">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800/80 mb-3">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <i data-lucide="award" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-extrabold text-white">Lịch sử hoạt động & Điểm số</h3>
+              <p class="text-[11px] text-slate-400">Lưu vĩnh viễn trên máy — không bị mất khi tải lại</p>
+            </div>
+          </div>
+          <span id="history-count-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-emerald-400 border border-slate-700">0 mục</span>
+        </div>
+
+        <div id="history-container" class="overflow-y-auto max-h-[260px] space-y-2 pr-1">
+          <div class="p-6 text-center text-slate-500 text-xs">
+            Chưa có lịch sử làm bài. Khi bot nộp bài hoặc hoàn thành slide, kết quả sẽ ghi nhận tại đây!
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: LIVE TERMINAL STREAM -->
+      <div class="glass-panel rounded-3xl p-5 flex flex-col justify-between shadow-2xl">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800/80 mb-3">
+          <div class="flex items-center space-x-2">
+            <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+            <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+            <span class="text-xs font-bold text-slate-300 ml-2">Live Terminal Stream</span>
+          </div>
+          <div class="flex items-center space-x-3 text-xs text-slate-400">
+            <label class="flex items-center space-x-1.5 cursor-pointer">
+              <input type="checkbox" id="auto-scroll-toggle" checked class="rounded bg-slate-900 border-slate-800 text-indigo-500 focus:ring-0">
+              <span>Tự cuộn</span>
+            </label>
+            <button onclick="clearTerminal()" title="Xóa màn hình" class="hover:text-white transition">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="terminal-screen" class="bg-slate-950/90 rounded-2xl p-3.5 font-mono text-[11px] h-[260px] overflow-y-auto text-slate-300 space-y-1 border border-slate-900">
+          <p class="text-slate-500">[Hệ thống] Đang kết nối luồng SSE trực tiếp...</p>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL: SETTINGS (AI CODING CLI - NO API KEY REQUIRED) -->
+  <!-- ===================================================================== -->
+  <div id="modal-settings" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <h3 class="text-base font-extrabold text-white flex items-center space-x-2">
+          <i data-lucide="terminal" class="w-4 h-4 text-indigo-400"></i>
+          <span>Cấu hình Công cụ AI Coding (Không cần API Key)</span>
+        </h3>
+        <button onclick="closeModal('modal-settings')" class="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Công cụ AI Coding CLI:</label>
+          <select id="select-provider" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+            <option value="auto">⚡ Tự động xoay vòng (Antigravity ➔ Codex ➔ Claude)</option>
+            <option value="antigravity">🚀 Google Antigravity CLI (agy)</option>
+            <option value="codex">🧠 OpenAI Codex CLI (codex exec)</option>
+            <option value="claude">🤖 Claude Code CLI (claude -p)</option>
+            <option value="opencode">💻 OpenCode CLI (opencode run)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Mô hình suy luận (Model):</label>
+          <select id="select-model" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+            <option value="gemini-3.8-flash-low">gemini-3.8-flash-low (Antigravity - Siêu nhanh ~1s)</option>
+            <option value="gemini-3.8-flash-medium">gemini-3.8-flash-medium (Antigravity - Cân bằng)</option>
+            <option value="gemini-4-argon-medium">gemini-4-argon-medium (Antigravity - Gemini 4 Argon)</option>
+            <option value="claude-sonnet-5-5-low">claude-sonnet-5-5-low (Antigravity - Claude Sonnet 5.5)</option>
+            <option value="gpt-6-luna">gpt-6-luna (OpenAI Codex CLI)</option>
+          </select>
+        </div>
+
+        <div class="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-[11px] text-emerald-300">
+          ✅ <strong>Đã bỏ hoàn toàn API Key!</strong> Hệ thống kết nối trực tiếp vào phiên đăng nhập sẵn có của <code>agy</code> (Antigravity) và <code>codex</code> trên máy bạn.
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-slate-800 flex justify-end space-x-2">
+        <button onclick="closeModal('modal-settings')" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700">Hủy</button>
+        <button onclick="saveSettings()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/30">Lưu cấu hình</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL: CACHE DETAILS -->
+  <!-- ===================================================================== -->
+  <div id="modal-cache" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <h3 class="text-base font-extrabold text-white flex items-center space-x-2">
+          <i data-lucide="database" class="w-4 h-4 text-amber-400"></i>
+          <span>Ngân hàng câu hỏi Cache</span>
+        </h3>
+        <button onclick="closeModal('modal-cache')" class="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2.5 text-xs">
+        <div class="flex justify-between items-center">
+          <span class="text-slate-400">Số câu hỏi đã lưu:</span>
+          <span class="font-bold text-amber-400 font-mono text-sm" id="modal-cache-count">0 câu</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-slate-400">Trạng thái lưu:</span>
+          <span class="font-bold text-emerald-400 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Vĩnh viễn trên máy
+          </span>
+        </div>
+        <div class="text-[11px] text-slate-400 pt-1 border-t border-slate-800/80">
+          <p>⚠️ <strong>Lưu ý:</strong> Cache câu hỏi <u>KHÔNG bị xóa khi tắt app</u>. Cache này giúp bot gặp lại câu hỏi cũ sẽ giải tức thì 0.01s mà không tốn API.</p>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-slate-800 flex justify-between items-center">
+        <button onclick="clearCacheAction()" class="px-3.5 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500 hover:text-white text-xs font-bold transition">
+          Xóa sạch cache
+        </button>
+        <button onclick="closeModal('modal-cache')" class="px-4 py-1.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast-box" class="fixed bottom-6 right-6 z-50 max-w-sm rounded-2xl px-4 py-3 shadow-2xl border transition-all duration-300 translate-y-20 opacity-0 pointer-events-none flex items-center space-x-3 text-xs font-semibold">
+    <i id="toast-icon" data-lucide="info" class="w-4 h-4 shrink-0"></i>
+    <span id="toast-msg" class="flex-1">Thông báo</span>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    lucide.createIcons();
+
+    let allCourseRows = [];
+    let currentFilter = 'all';
+    let currentViewMode = 'grouped'; // 'grouped' (1 row per chapter) hoac 'all_flat'
+    let chapterScoresMap = {};
+
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    function toggleExtraInputs() {
+      const p = document.getElementById('extra-inputs-panel');
+      p.classList.toggle('hidden');
+    }
+
+    function showToast(msg, type = 'info') {
+      const toast = document.getElementById('toast-box');
+      const icon = document.getElementById('toast-icon');
+      const text = document.getElementById('toast-msg');
+
+      text.innerText = msg;
+      toast.className = 'fixed bottom-6 right-6 z-50 max-w-sm rounded-2xl px-4 py-3 shadow-2xl border transition-all duration-300 flex items-center space-x-3 text-xs font-semibold';
+
+      if (type === 'success') {
+        toast.classList.add('bg-emerald-950/90', 'border-emerald-500/50', 'text-emerald-200');
+        icon.setAttribute('data-lucide', 'check-circle');
+      } else if (type === 'error') {
+        toast.classList.add('bg-rose-950/90', 'border-rose-500/50', 'text-rose-200');
+        icon.setAttribute('data-lucide', 'alert-circle');
+      } else {
+        toast.classList.add('bg-indigo-950/90', 'border-indigo-500/50', 'text-indigo-200');
+        icon.setAttribute('data-lucide', 'info');
+      }
+
+      lucide.createIcons();
+      toast.classList.remove('translate-y-20', 'opacity-0');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3500);
+    }
+
+    function clearTerminal() {
+      document.getElementById('terminal-screen').innerHTML = '<p class="text-slate-500">[Hệ thống] Màn hình log đã được làm sạch.</p>';
+    }
+
+    // =========================================================================
+    // SSE LOG STREAMING
+    // =========================================================================
+    function initEventSource() {
+      const evtSource = new EventSource('/api/logs');
+      const term = document.getElementById('terminal-screen');
+      const autoScroll = document.getElementById('auto-scroll-toggle');
+
+      evtSource.onmessage = function(e) {
+        if (!e.data) return;
+        const p = document.createElement('p');
+        p.className = 'leading-relaxed break-words';
+        
+        let txt = e.data;
+        if (txt.includes('[OK]')) {
+          p.className += ' text-emerald-400 font-semibold';
+        } else if (txt.includes('[X]') || txt.includes('[Lỗi]') || txt.includes('ERROR')) {
+          p.className += ' text-rose-400 font-bold';
+        } else if (txt.includes('[AI]')) {
+          p.className += ' text-purple-400';
+        } else if (txt.includes('[SLIDE]') || txt.includes('[TURBO]')) {
+          p.className += ' text-blue-400';
+        } else if (txt.includes('[START]') || txt.includes('[RA SOÁT]')) {
+          p.className += ' text-amber-300 font-medium';
+        } else if (txt.includes('[KẾT QUẢ]') || txt.includes('[RESULT]')) {
+          p.className += ' text-emerald-300 font-extrabold bg-emerald-500/10 px-2 py-0.5 rounded';
+        }
+
+        p.textContent = txt;
+        term.appendChild(p);
+
+        if (term.childElementCount > 350) {
+          term.removeChild(term.firstChild);
+        }
+
+        if (autoScroll.checked) {
+          term.scrollTop = term.scrollHeight;
+        }
+      };
+
+      evtSource.onerror = function() {
+        setTimeout(initEventSource, 3000);
+      };
+    }
+    initEventSource();
+
+    // =========================================================================
+    // SYSTEM STATUS & HISTORY POLLING
+    // =========================================================================
+    async function updateStatus() {
+      try {
+        const resp = await fetch('/api/status');
+        const data = await resp.json();
+
+        // 1. Chrome dot & status
+        const cDot = document.getElementById('chrome-dot');
+        const cTxt = document.getElementById('chrome-status-text');
+        if (data.chrome_connected) {
+          cDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50 animate-pulse';
+          cTxt.innerText = 'Cổng 9222';
+          cTxt.className = 'font-semibold text-emerald-400';
+        } else {
+          cDot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
+          cTxt.innerText = 'Chưa kết nối';
+          cTxt.className = 'font-semibold text-rose-400';
+        }
+
+        // 2. Subject name
+        const subjTxt = document.getElementById('subject-name-text');
+        if (data.subject_name && data.subject_name !== 'Chưa nhận diện môn') {
+          subjTxt.innerText = data.subject_name;
+        }
+
+        // 3. Cache count
+        document.getElementById('cache-count-text').innerText = (data.cache_count || 0) + ' câu';
+        document.getElementById('modal-cache-count').innerText = (data.cache_count || 0) + ' câu';
+
+        // 4. Running task & stages
+        const badge = document.getElementById('task-state-badge');
+        const title = document.getElementById('current-task-title');
+        const btnStop = document.getElementById('btn-stop-task');
+        const timer = document.getElementById('task-timer-text');
+
+        if (data.is_running) {
+          badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 animate-pulse';
+          badge.innerText = 'ĐANG CHẠY';
+          title.innerText = data.current_task || 'Đang thực thi nhiệm vụ...';
+          btnStop.disabled = false;
+
+          const m = Math.floor(data.elapsed_sec / 60);
+          const s = data.elapsed_sec % 60;
+          timer.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}s`;
+        } else {
+          badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-800 text-slate-400 border border-slate-700';
+          badge.innerText = 'SẴN SÀNG';
+          title.innerText = data.last_score ? `Hoàn thành tác vụ (Điểm: ${data.last_score})` : 'Chưa có tác vụ nào đang chạy';
+          btnStop.disabled = true;
+          timer.innerText = '00:00s';
+        }
+
+        // 5. Progress values
+        const pFill = document.getElementById('progress-bar-fill');
+        const pLabel = document.getElementById('progress-percent-label');
+        const qRatio = document.getElementById('question-ratio-text');
+        const stepDetail = document.getElementById('step-detail-label');
+
+        pFill.style.width = (data.progress_percent || 0) + '%';
+        pLabel.innerText = (data.progress_percent || 0) + '%';
+        stepDetail.innerText = data.step_label || 'Sẵn sàng nhận lệnh';
+
+        if (data.progress_total > 0) {
+          qRatio.innerText = `(${data.progress_current} / ${data.progress_total})`;
+        } else {
+          qRatio.innerText = '(0 / 0)';
+        }
+
+        // 6. Pipeline 4 steps
+        for (let i = 1; i <= 4; i++) {
+          const stepEl = document.getElementById('pipeline-step-' + i);
+          const dot = stepEl.querySelector('span:first-child');
+          const txt = stepEl.querySelector('span:last-child');
+          if (data.active_stage === i) {
+            stepEl.className = 'p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/50 flex items-center space-x-2 transition-all duration-300 ring-1 ring-indigo-500/20';
+            dot.className = 'w-2.5 h-2.5 rounded-full bg-indigo-400 animate-pulse';
+            txt.className = 'text-white font-bold truncate';
+          } else if (data.active_stage > i) {
+            stepEl.className = 'p-2 rounded-xl bg-emerald-500/5 border border-emerald-500/20 flex items-center space-x-2 transition-all duration-300';
+            dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400';
+            txt.className = 'text-slate-300 font-medium truncate';
+          } else {
+            stepEl.className = 'p-2 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center space-x-2 transition-all duration-300';
+            dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-600';
+            txt.className = 'text-slate-400 font-medium truncate';
+          }
+        }
+
+        // 7. Scores Map & History List
+        chapterScoresMap = data.chapter_scores || {};
+        renderHistoryList(data.history || []);
+
+      } catch (err) {}
+    }
+    setInterval(updateStatus, 1500);
+    updateStatus();
+
+    // =========================================================================
+    // HISTORY FEED RENDERER
+    // =========================================================================
+    function renderHistoryList(history) {
+      const container = document.getElementById('history-container');
+      const countBadge = document.getElementById('history-count-badge');
+      if (!history || history.length === 0) {
+        container.innerHTML = '<div class="p-6 text-center text-slate-500 text-xs">Chưa có lịch sử làm bài. Khi bot nộp bài hoặc lướt slide xong, kết quả sẽ tự động lưu vĩnh viễn tại đây!</div>';
+        countBadge.innerText = '0 mục';
+        return;
+      }
+
+      countBadge.innerText = `${history.length} mục`;
+      container.innerHTML = '';
+      history.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'p-2.5 rounded-2xl bg-slate-950/70 border border-slate-800/70 flex items-center justify-between gap-3 hover:border-slate-700 transition';
+
+        let badge = '';
+        if (item.type === 'slide') {
+          badge = '<span class="badge-slide px-2 py-0.5 rounded-md text-[10px] font-bold">Slide bài giảng</span>';
+        } else if (item.type === 'ai') {
+          badge = '<span class="badge-ai px-2 py-0.5 rounded-md text-[10px] font-bold">Bài tập AI</span>';
+        } else {
+          badge = '<span class="badge-normal px-2 py-0.5 rounded-md text-[10px] font-bold">Bài tập</span>';
+        }
+
+        div.innerHTML = `
+          <div class="flex items-center space-x-2.5 min-w-0">
+            <span class="text-[11px] font-mono text-slate-500 shrink-0">${item.time}</span>
+            <div class="min-w-0">
+              <div class="flex items-center space-x-2">
+                <p class="text-xs font-bold text-white truncate max-w-xs">${item.title}</p>
+                ${badge}
+              </div>
+              <p class="text-[11px] text-slate-400 truncate">${item.detail || ''}</p>
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="text-xs font-extrabold text-emerald-400 font-mono">${item.score}</span>
+            <p class="text-[10px] text-slate-500 font-medium">${item.status || 'Hoàn thành'}</p>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // =========================================================================
+    // CURRICULUM TABLE RENDERER (ALL-IN-ONE HUB - TỐI ƯU GỌN GÀNG)
+    // =========================================================================
+    async function refreshCourseTable() {
+      const tbody = document.getElementById('course-table-body');
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" class="p-8 text-center text-slate-400">
+            <div class="flex flex-col items-center justify-center space-y-2">
+              <div class="w-8 h-8 rounded-full border-2 border-cyan-500 border-t-transparent animate-spin"></div>
+              <p class="text-xs">Đang quét toàn bộ danh sách bài học trên Chrome (vui lòng chờ vài giây)...</p>
+            </div>
+          </td>
+        </tr>`;
+
+      try {
+        const resp = await fetch('/api/action/scan_course', { method: 'POST' });
+        const data = await resp.json();
+        allCourseRows = data || [];
+        renderCourseTable();
+        showToast(`Đã quét thành công ${allCourseRows.length} mục bài học!`, 'success');
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-rose-400">Không thể quét danh sách bài học. Hãy đảm bảo Chrome đang mở trang môn học!</td></tr>';
+      }
+    }
+
+    function setViewMode(mode) {
+      currentViewMode = mode;
+      currentFilter = 'all';
+      const btnG = document.getElementById('btn-view-grouped');
+      const btnF = document.getElementById('btn-view-flat');
+      if (mode === 'grouped') {
+        btnG.className = 'px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold transition shadow-sm shadow-indigo-600/30 flex items-center space-x-1';
+        btnF.className = 'px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition flex items-center space-x-1';
+      } else {
+        btnF.className = 'px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold transition shadow-sm shadow-indigo-600/30 flex items-center space-x-1';
+        btnG.className = 'px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition flex items-center space-x-1';
+      }
+      resetTypeFilterButtons();
+      renderCourseTable();
+    }
+
+    function resetTypeFilterButtons() {
+      ['ai', 'manual', 'slide'].forEach(t => {
+        const btn = document.getElementById('btn-filter-' + t);
+        if (btn) btn.classList.remove('ring-2', 'ring-white', 'bg-slate-800');
+      });
+    }
+
+    function filterCourseTable(type) {
+      currentFilter = type;
+      currentViewMode = 'all_flat'; // Khi loc rieng 1 loai thi chuyen sang che do chi tiet
+      
+      const btnG = document.getElementById('btn-view-grouped');
+      const btnF = document.getElementById('btn-view-flat');
+      btnF.className = 'px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold transition shadow-sm shadow-indigo-600/30 flex items-center space-x-1';
+      btnG.className = 'px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition flex items-center space-x-1';
+
+      resetTypeFilterButtons();
+      const activeBtn = document.getElementById('btn-filter-' + type);
+      if (activeBtn) activeBtn.classList.add('ring-2', 'ring-white', 'bg-slate-800');
+
+      renderCourseTable(document.getElementById('course-search-input').value);
+    }
+
+    function searchCourseTable(query) {
+      renderCourseTable(query);
+    }
+
+    // Helper tim diem cao nhat tu cache
+    function getChapterScore(title) {
+      const clean = title.split('(')[0].trim();
+      return chapterScoresMap[clean] || chapterScoresMap[title] || null;
+    }
+
+    function renderCourseTable(query = '') {
+      const thead = document.getElementById('table-head');
+      const tbody = document.getElementById('course-table-body');
+      const totalBadge = document.getElementById('course-total-badge');
+
+      let rows = allCourseRows || [];
+
+      // 1. CHE DO MAC DINH: GOM THEO CHUONG (1 DONG = 1 CHAPTER DUY NHAT - 0 ROI MAT)
+      if (currentViewMode === 'grouped' && currentFilter === 'all') {
+        thead.innerHTML = `
+          <tr>
+            <th class="p-3 w-12 text-center">STT</th>
+            <th class="p-3 w-24">Tuần</th>
+            <th class="p-3">Tên Chapter / Bài học</th>
+            <th class="p-3 text-center w-28">% Trợ giảng</th>
+            <th class="p-3 text-center w-40">Slide bài giảng (Xanh)</th>
+            <th class="p-3 text-center w-40">Bài tập AI (Tím)</th>
+            <th class="p-3 text-center w-40">Bài tập (Cam)</th>
+          </tr>
+        `;
+
+        // Gom nhom theo ten chapter
+        const groups = new Map();
+        rows.forEach(r => {
+          const key = r.title || 'Chương học';
+          if (!groups.has(key)) {
+            groups.set(key, {
+              week: r.week,
+              title: key,
+              percent_tg: r.percent_tg,
+              percent_val: r.percent_val,
+              hasSlide: false,
+              hasAI: false,
+              hasManual: false,
+              slideRow: null,
+              aiRow: null,
+              manualRow: null
+            });
+          }
+          const g = groups.get(key);
+          if (r.target_type === 'slide') { g.hasSlide = true; g.slideRow = r; }
+          if (r.target_type === 'ai') { g.hasAI = true; g.aiRow = r; }
+          if (r.target_type === 'manual') { g.hasManual = true; g.manualRow = r; }
+        });
+
+        let chapterList = Array.from(groups.values());
+        if (query) {
+          const q = query.toLowerCase().trim();
+          chapterList = chapterList.filter(c => c.title.toLowerCase().includes(q) || c.week.toLowerCase().includes(q));
+        }
+
+        totalBadge.innerText = `${chapterList.length} chương`;
+
+        if (chapterList.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-500">Không tìm thấy chương nào phù hợp.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        chapterList.forEach((c, idx) => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-900/60 transition border-b border-slate-800/60';
+
+          const pctColor = (c.percent_val !== undefined && c.percent_val >= 100) ? 'text-emerald-400' : 'text-amber-400';
+          const safeTitle = c.title.replace(/'/g, "\\'");
+
+          // Cot Slide (Xanh duong)
+          let slideHtml = '<span class="text-slate-600">-</span>';
+          if (c.hasSlide) {
+            const isSlideDone = (c.percent_val !== undefined && c.percent_val >= 100);
+            slideHtml = `
+              <div class="flex items-center justify-center">
+                <button onclick="solveSpecific('${safeTitle}', 'slide')" class="px-3 py-1.5 rounded-xl bg-blue-600/90 hover:bg-blue-600 text-white font-bold text-xs transition active:scale-95 shadow-sm shadow-blue-500/20 flex items-center space-x-1.5 w-full justify-center">
+                  <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                  <span>${isSlideDone ? 'Lướt lại' : 'Chạy Slide'}</span>
+                </button>
+              </div>`;
+          }
+
+          // Cot Bai tap AI (Tim)
+          let aiHtml = '<span class="text-slate-600">-</span>';
+          if (c.hasAI) {
+            const savedScore = getChapterScore(c.title);
+            const scoreLabel = savedScore ? `<span class="text-[10px] text-emerald-300 font-extrabold mr-1">(${savedScore})</span>` : '';
+            aiHtml = `
+              <div class="flex items-center justify-center">
+                <button onclick="solveSpecific('${safeTitle}', 'ai')" class="px-3 py-1.5 rounded-xl bg-purple-600/90 hover:bg-purple-600 text-white font-bold text-xs transition active:scale-95 shadow-sm shadow-purple-500/20 flex items-center space-x-1.5 w-full justify-center">
+                  <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                  <span>${scoreLabel}Giải AI</span>
+                </button>
+              </div>`;
+          }
+
+          // Cot Bai tap (Cam)
+          let manualHtml = '<span class="text-slate-600">-</span>';
+          if (c.hasManual) {
+            const savedScore = getChapterScore(c.title);
+            const scoreLabel = savedScore ? `<span class="text-[10px] text-emerald-300 font-extrabold mr-1">(${savedScore})</span>` : '';
+            manualHtml = `
+              <div class="flex items-center justify-center">
+                <button onclick="solveSpecific('${safeTitle}', 'manual')" class="px-3 py-1.5 rounded-xl bg-orange-600/90 hover:bg-orange-600 text-white font-bold text-xs transition active:scale-95 shadow-sm shadow-orange-500/20 flex items-center space-x-1.5 w-full justify-center">
+                  <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                  <span>${scoreLabel}Giải bài</span>
+                </button>
+              </div>`;
+          }
+
+          tr.innerHTML = `
+            <td class="p-3 text-center text-slate-400 font-mono">${idx + 1}</td>
+            <td class="p-3 text-cyan-400 font-semibold whitespace-nowrap">${c.week}</td>
+            <td class="p-3 font-bold text-white max-w-sm truncate" title="${c.title}">${c.title}</td>
+            <td class="p-3 text-center ${pctColor} font-bold font-mono">${c.percent_tg}</td>
+            <td class="p-2.5">${slideHtml}</td>
+            <td class="p-2.5">${aiHtml}</td>
+            <td class="p-2.5">${manualHtml}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+      } else {
+        // 2. CHE DO CHI TIET HOAC KHI CHON BO LOC RIENG (AI / SLIDE / MANUAL)
+        thead.innerHTML = `
+          <tr>
+            <th class="p-3 w-12 text-center">STT</th>
+            <th class="p-3 w-24">Tuần</th>
+            <th class="p-3">Tên Chapter / Bài học</th>
+            <th class="p-3 text-center w-28">% Trợ giảng</th>
+            <th class="p-3 w-36">Loại bài</th>
+            <th class="p-3 text-center w-32">Điểm cao nhất</th>
+            <th class="p-3 text-right w-36">Hành động</th>
+          </tr>
+        `;
+
+        let filtered = rows;
+        if (currentFilter === 'ai') {
+          filtered = filtered.filter(r => r.target_type === 'ai');
+        } else if (currentFilter === 'manual') {
+          filtered = filtered.filter(r => r.target_type === 'manual');
+        } else if (currentFilter === 'slide') {
+          filtered = filtered.filter(r => r.target_type === 'slide');
+        }
+
+        if (query) {
+          const q = query.toLowerCase().trim();
+          filtered = filtered.filter(r => r.title.toLowerCase().includes(q) || r.week.toLowerCase().includes(q));
+        }
+
+        totalBadge.innerText = `${filtered.length} mục`;
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-500">Không tìm thấy bài học nào phù hợp bộ lọc.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        filtered.forEach((r, idx) => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-900/60 transition border-b border-slate-800/60';
+
+          const pctColor = (r.percent_val !== undefined && r.percent_val >= 100) ? 'text-emerald-400' : 'text-amber-400';
+          const safeTitle = r.title.replace(/'/g, "\\'");
+
+          // Distinct Color Badges as Requested by User:
+          let typeBadge = '';
+          let actionBtn = '';
+          let scoreDisplay = r.highest_score || '-';
+
+          // Kiem tra neu co diem trong history
+          const savedScore = getChapterScore(r.title);
+          if (savedScore && r.target_type !== 'slide') {
+            scoreDisplay = `<span class="px-2 py-0.5 rounded font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">${savedScore}</span>`;
+          } else if (r.target_type === 'slide') {
+            scoreDisplay = (r.percent_val !== undefined && r.percent_val >= 100) ? '<span class="text-emerald-400 font-bold">100% Slide</span>' : `<span class="text-amber-400 font-bold">${r.percent_tg}</span>`;
+          }
+
+          if (r.target_type === 'ai') {
+            typeBadge = '<span class="badge-ai px-2.5 py-1 rounded-full text-[11px] font-bold flex items-center gap-1.5 w-fit"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>Bài tập AI</span>';
+            actionBtn = `<button onclick="solveSpecific('${safeTitle}', 'ai')" class="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs transition active:scale-95 shadow-sm shadow-purple-600/30 ml-auto flex items-center space-x-1"><span>Giải AI</span></button>`;
+          } else if (r.target_type === 'slide') {
+            typeBadge = '<span class="badge-slide px-2.5 py-1 rounded-full text-[11px] font-bold flex items-center gap-1.5 w-fit"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>Slide bài giảng</span>';
+            actionBtn = `<button onclick="solveSpecific('${safeTitle}', 'slide')" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition active:scale-95 shadow-sm shadow-blue-600/30 ml-auto flex items-center space-x-1"><span>Chạy Slide</span></button>`;
+          } else {
+            typeBadge = '<span class="badge-normal px-2.5 py-1 rounded-full text-[11px] font-bold flex items-center gap-1.5 w-fit"><span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span>Bài tập</span>';
+            actionBtn = `<button onclick="solveSpecific('${safeTitle}', 'manual')" class="px-3.5 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs transition active:scale-95 shadow-sm shadow-orange-600/30 ml-auto flex items-center space-x-1"><span>Giải bài</span></button>`;
+          }
+
+          tr.innerHTML = `
+            <td class="p-3 text-center text-slate-400 font-mono">${idx + 1}</td>
+            <td class="p-3 text-cyan-400 font-semibold whitespace-nowrap">${r.week}</td>
+            <td class="p-3 font-bold text-white max-w-sm truncate" title="${r.title}">${r.title}</td>
+            <td class="p-3 text-center ${pctColor} font-bold font-mono">${r.percent_tg}</td>
+            <td class="p-3 whitespace-nowrap">${typeBadge}</td>
+            <td class="p-3 text-center font-mono whitespace-nowrap">${scoreDisplay}</td>
+            <td class="p-3 text-right whitespace-nowrap">${actionBtn}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      lucide.createIcons();
+    }
+
+    // Auto-fetch course table on first load
+    setTimeout(refreshCourseTable, 1000);
+
+    // =========================================================================
+    // ACTION TRIGGERS
+    // =========================================================================
+    async function triggerSolveCurrent() {
+      showToast('Đang bắt đầu giải bài tập đang mở trên Chrome...', 'info');
+      await fetch('/api/action/solve_current', { method: 'POST' });
+    }
+
+    async function triggerSlideRun() {
+      const speed = parseFloat(document.getElementById('slide-speed-select').value) || 0.65;
+      showToast(`Bắt đầu lướt Slide đang mở (Tốc độ: ${speed}s/trang)...`, 'info');
+      await fetch('/api/action/slide', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ speed: speed })
+      });
+    }
+
+    async function solveSpecific(title, targetType) {
+      const actionName = targetType === 'slide' ? 'Chạy Slide' : (targetType === 'ai' ? 'Giải Bài tập AI' : 'Giải Bài tập');
+      showToast(`Bắt đầu ${actionName}: ${title}...`, 'info');
+      await fetch('/api/action/solve_specific', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: title, target_type: targetType })
+      });
+    }
+
+    async function triggerSolveRange() {
+      const s = parseInt(document.getElementById('range-start').value, 10) || 1;
+      const e = parseInt(document.getElementById('range-end').value, 10) || 20;
+      showToast(`Bắt đầu giải từ câu ${s} đến câu ${e}...`, 'info');
+      await fetch('/api/action/solve_range', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ start_q: s, end_q: e })
+      });
+    }
+
+    async function triggerSolveUrl() {
+      const u = document.getElementById('direct-url-input').value.trim();
+      if (!u) {
+        showToast('Vui lòng dán link bài tập hợp lệ!', 'error');
+        return;
+      }
+      showToast('Đang điều hướng Chrome và giải bài...', 'info');
+      await fetch('/api/action/solve_url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: u })
+      });
+    }
+
+    async function stopAction() {
+      await fetch('/api/action/stop', { method: 'POST' });
+      showToast('Đã gửi lệnh dừng tác vụ!', 'error');
+    }
+
+    async function saveSettings() {
+      const provider = document.getElementById('select-provider').value;
+      const model = document.getElementById('select-model').value;
+      await fetch('/api/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider: provider, model: model })
+      });
+      closeModal('modal-settings');
+      showToast(`Đã lưu cấu hình AI CLI (${provider.toUpperCase()} - ${model})!`, 'success');
+    }
+
+    async function clearCacheAction() {
+      if (confirm('Bạn có chắc chắn muốn xóa sạch toàn bộ ngân hàng câu hỏi đã lưu?')) {
+        await fetch('/api/cache', { method: 'DELETE' });
+        closeModal('modal-cache');
+        showToast('Đã xóa sạch bộ nhớ cache!', 'success');
+        updateStatus();
+      }
+    }
+  </script>
+</body>
+</html>

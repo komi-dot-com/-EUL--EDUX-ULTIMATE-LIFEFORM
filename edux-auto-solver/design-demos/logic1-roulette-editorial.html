@@ -1,0 +1,3307 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EDUX ULTIMATE LIFEFORM v3.0 — Bảng điều khiển tự động hóa CMCU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-paper: #FAF9F6;
+      --bg-surface: #FFFFFF;
+      --bg-recessed: #F2F0EA;
+      --bg-track: #EAE7DF;
+      --bg-hover: #F5F3ED;
+      --bg-terminal: #151517;
+      --bg-terminal-bar: #1E1E22;
+
+      --ink-primary: #111113;
+      --ink-secondary: #575652;
+      --ink-on-dark: #ECEAE3;
+      --ink-muted-dark: #9D9B94;
+
+      --hairline: #E2E0D8;
+      --hairline-strong: #C9C5B9;
+      --hairline-ink: #111113;
+
+      --accent-vermilion: #C93B2B;
+      --accent-vermilion-hover: #AD2F21;
+      --accent-vermilion-tint: rgba(201, 59, 43, 0.08);
+
+      --sem-emerald: #157A46;
+      --sem-emerald-tint: rgba(21, 122, 70, 0.09);
+      --sem-cobalt: #2454A6;
+      --sem-cobalt-tint: rgba(36, 84, 166, 0.09);
+      --sem-ochre: #B45309;
+      --sem-ochre-tint: rgba(180, 83, 9, 0.09);
+
+      --font-editorial: 'Newsreader', Georgia, 'Times New Roman', serif;
+      --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, "SF Mono", Menlo, monospace;
+
+      --radius-xs: 4px;
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-pill: 999px;
+      --focus-ring: 0 0 0 2px #FAF9F6, 0 0 0 4px #C93B2B;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-paper);
+      color: var(--ink-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    button, input, select {
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    [role="switch"]:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    .tabular {
+      font-variant-numeric: tabular-nums lining-nums;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Editorial Top Colophon Rule */
+    .editorial-rule {
+      height: 3px;
+      background: var(--ink-primary);
+      position: relative;
+    }
+    .editorial-rule::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 88px;
+      height: 3px;
+      background: var(--accent-vermilion);
+    }
+
+    /* Full-width Top Editorial Masthead */
+    .masthead {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .masthead-inner {
+      max-width: 1520px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+
+    .masthead-kicker {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--hairline);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--ink-secondary);
+    }
+
+    .kicker-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .kicker-brand {
+      color: var(--ink-primary);
+      font-weight: 700;
+    }
+
+    .kicker-divider {
+      color: var(--hairline-strong);
+    }
+
+    .mode-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 9px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--hairline);
+      background: var(--bg-paper);
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: none;
+      letter-spacing: 0;
+      color: var(--ink-secondary);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--ink-secondary);
+      flex-shrink: 0;
+    }
+    .status-dot.connected { background: var(--sem-emerald); }
+    .status-dot.running {
+      background: var(--accent-vermilion);
+      animation: pulse-dot 1.4s ease-in-out infinite;
+    }
+    .status-dot.disconnected { background: var(--accent-vermilion); }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.82); }
+    }
+
+    .masthead-main {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 32px;
+      padding: 20px 0 22px;
+    }
+
+    .masthead-subject {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .subject-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent-vermilion);
+    }
+
+    .subject-title {
+      margin: 0;
+      font-family: var(--font-editorial);
+      font-weight: 600;
+      font-size: clamp(1.8rem, 2.7vw, 2.5rem);
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      color: var(--ink-primary);
+      word-break: break-word;
+    }
+
+    .masthead-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--ink-secondary);
+    }
+
+    .meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .meta-item strong {
+      color: var(--ink-primary);
+      font-weight: 600;
+    }
+
+    .meta-sep {
+      width: 1px;
+      height: 14px;
+      background: var(--hairline-strong);
+    }
+
+    .meta-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .masthead-kpi-zone {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 14px;
+    }
+
+    .kpi-readout {
+      display: flex;
+      align-items: baseline;
+      gap: 18px;
+    }
+
+    .kpi-giant {
+      font-family: var(--font-editorial);
+      font-weight: 600;
+      font-size: clamp(2rem, 3.2vw, 3rem);
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      color: var(--ink-primary);
+      font-variant-numeric: tabular-nums lining-nums;
+    }
+    .kpi-giant.is-running {
+      color: var(--accent-vermilion);
+    }
+    .kpi-giant.is-done {
+      color: var(--sem-emerald);
+    }
+
+    .kpi-submetrics {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+      font-size: 12.5px;
+      color: var(--ink-secondary);
+    }
+
+    .kpi-timer {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-primary);
+    }
+
+    .cta-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      height: 36px;
+      padding: 0 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--hairline-strong);
+      background: var(--bg-surface);
+      color: var(--ink-primary);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease, opacity 0.14s ease;
+    }
+
+    .btn:hover:not(:disabled) {
+      background: var(--bg-hover);
+      border-color: var(--ink-primary);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: translateY(0.5px);
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-sm {
+      height: 30px;
+      padding: 0 10px;
+      font-size: 12.5px;
+      gap: 5px;
+    }
+
+    .btn-primary {
+      background: var(--ink-primary);
+      border-color: var(--ink-primary);
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: #27272B;
+      border-color: #27272B;
+    }
+
+    .btn-cobalt {
+      background: var(--bg-surface);
+      border-color: rgba(36, 84, 166, 0.35);
+      color: var(--sem-cobalt);
+      font-weight: 600;
+    }
+    .btn-cobalt:hover:not(:disabled) {
+      background: var(--sem-cobalt-tint);
+      border-color: var(--sem-cobalt);
+    }
+
+    .btn-stop {
+      background: var(--bg-surface);
+      border-color: var(--hairline-strong);
+      color: var(--ink-secondary);
+      font-weight: 600;
+    }
+    .btn-stop.active-stop {
+      background: var(--accent-vermilion);
+      border-color: var(--accent-vermilion);
+      color: #FFFFFF;
+    }
+    .btn-stop.active-stop:hover:not(:disabled) {
+      background: var(--accent-vermilion-hover);
+      border-color: var(--accent-vermilion-hover);
+    }
+
+    .btn-danger-outline {
+      background: var(--bg-surface);
+      border-color: rgba(201, 59, 43, 0.4);
+      color: var(--accent-vermilion);
+      font-weight: 600;
+    }
+    .btn-danger-outline:hover:not(:disabled) {
+      background: var(--accent-vermilion-tint);
+      border-color: var(--accent-vermilion);
+    }
+
+    .btn-danger-solid {
+      background: var(--accent-vermilion);
+      border-color: var(--accent-vermilion);
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+    .btn-danger-solid:hover:not(:disabled) {
+      background: var(--accent-vermilion-hover);
+      border-color: var(--accent-vermilion-hover);
+    }
+
+    .icon {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .icon-sm {
+      width: 13px;
+      height: 13px;
+    }
+
+    /* Main Asymmetric 68% / 32% Workspace */
+    .workspace {
+      max-width: 1520px;
+      margin: 0 auto;
+      padding: 24px 28px 40px;
+      display: grid;
+      grid-template-columns: minmax(0, 68fr) minmax(320px, 32fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .primary-pane {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .inspector-pane {
+      min-width: 0;
+      position: sticky;
+      top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* Editorial Panels */
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-md);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 18px;
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-secondary);
+    }
+
+    .panel-body {
+      padding: 16px 18px;
+    }
+
+    /* 4-Stage Pipeline Sequencer */
+    .pipeline-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .pipeline-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .pipeline-step-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--ink-primary);
+      font-weight: 500;
+      min-width: 0;
+    }
+
+    .pipeline-step-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .pipeline-fraction {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--ink-secondary);
+      white-space: nowrap;
+    }
+
+    .pipeline-stages {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .stage-cell {
+      padding: 14px 16px;
+      border-right: 1px solid var(--hairline);
+      border-bottom: 2px solid transparent;
+      background: var(--bg-surface);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      transition: background-color 0.16s ease, border-color 0.16s ease;
+    }
+    .stage-cell:last-child {
+      border-right: none;
+    }
+
+    .stage-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .stage-num {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-secondary);
+    }
+
+    .stage-badge {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-secondary);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .stage-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--ink-secondary);
+    }
+
+    .stage-cell.is-active {
+      background: var(--accent-vermilion-tint);
+      border-bottom-color: var(--accent-vermilion);
+    }
+    .stage-cell.is-active .stage-num,
+    .stage-cell.is-active .stage-badge {
+      color: var(--accent-vermilion);
+    }
+    .stage-cell.is-active .stage-name {
+      color: var(--ink-primary);
+    }
+
+    .stage-cell.is-done {
+      border-bottom-color: var(--sem-emerald);
+    }
+    .stage-cell.is-done .stage-num,
+    .stage-cell.is-done .stage-badge {
+      color: var(--sem-emerald);
+    }
+    .stage-cell.is-done .stage-name {
+      color: var(--ink-primary);
+    }
+
+    .pipeline-bar-track {
+      height: 4px;
+      background: var(--bg-track);
+      width: 100%;
+    }
+
+    .pipeline-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent-vermilion);
+      transition: width 0.28s ease, background-color 0.2s ease;
+    }
+    .pipeline-bar-fill.is-complete {
+      background: var(--sem-emerald);
+    }
+
+    /* Toolbar & Apple HIG Pure-Text Segmented Controls */
+    .curriculum-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px 12px;
+    }
+
+    .toolbar-segments {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .segmented {
+      display: inline-grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
+      padding: 3px;
+      background: var(--bg-track);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--hairline);
+      gap: 2px;
+    }
+
+    .segmented-option {
+      position: relative;
+      display: flex;
+    }
+
+    .segmented-option input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      pointer-events: none;
+    }
+
+    .segmented-option label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 5px 12px;
+      border-radius: 5px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-secondary);
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.14s ease, color 0.14s ease, box-shadow 0.14s ease;
+    }
+
+    .segmented-option input:checked + label {
+      background: var(--bg-surface);
+      color: var(--ink-primary);
+      font-weight: 600;
+      box-shadow: 0 1px 2px rgba(17, 17, 19, 0.08), 0 0 0 0.5px rgba(17, 17, 19, 0.06);
+    }
+
+    .segmented-option input:focus-visible + label {
+      box-shadow: var(--focus-ring);
+    }
+
+    /* Apple Search Field */
+    .search-wrap {
+      position: relative;
+      flex: 1 1 220px;
+      max-width: 280px;
+      min-width: 190px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--ink-secondary);
+      pointer-events: none;
+    }
+
+    .field-input {
+      width: 100%;
+      height: 34px;
+      padding: 0 10px;
+      background: var(--bg-surface);
+      border: 1px solid var(--hairline-strong);
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      color: var(--ink-primary);
+      transition: border-color 0.14s ease, box-shadow 0.14s ease;
+    }
+
+    .field-input:hover {
+      border-color: var(--ink-secondary);
+    }
+
+    .field-input:focus {
+      outline: none;
+      border-color: var(--ink-primary);
+      box-shadow: 0 0 0 2px rgba(17, 17, 19, 0.08);
+    }
+
+    .field-input.is-invalid {
+      border-color: var(--accent-vermilion);
+    }
+
+    .search-input {
+      padding-left: 32px;
+      padding-right: 30px;
+    }
+
+    .search-input::-webkit-search-cancel-button {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .clear-btn {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 22px;
+      height: 22px;
+      border: none;
+      border-radius: 50%;
+      background: var(--bg-track);
+      color: var(--ink-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+    }
+    .clear-btn:hover {
+      background: var(--hairline-strong);
+      color: var(--ink-primary);
+    }
+    .clear-btn[hidden] {
+      display: none;
+    }
+
+    /* Hairline Editorial Curriculum Table */
+    .table-surface {
+      background: var(--bg-surface);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .table-meta-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--hairline);
+      background: var(--bg-paper);
+      font-size: 12.5px;
+      color: var(--ink-secondary);
+    }
+
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .curriculum-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .curriculum-table thead th {
+      padding: 11px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink-secondary);
+      border-bottom: 1px solid var(--ink-primary);
+      background: var(--bg-surface);
+      white-space: nowrap;
+    }
+
+    .curriculum-table tbody tr {
+      border-bottom: 1px solid var(--hairline);
+      transition: background-color 0.12s ease;
+    }
+    .curriculum-table tbody tr:last-child {
+      border-bottom: none;
+    }
+    .curriculum-table tbody tr:hover {
+      background: var(--bg-hover);
+    }
+    .curriculum-table tbody tr.is-active-row {
+      background: var(--accent-vermilion-tint);
+    }
+
+    .curriculum-table td {
+      padding: 13px 14px;
+      vertical-align: middle;
+      font-size: 14px;
+    }
+
+    .col-week {
+      width: 84px;
+      white-space: nowrap;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--ink-secondary);
+    }
+
+    .chapter-title-main {
+      font-weight: 600;
+      color: var(--ink-primary);
+      line-height: 1.35;
+    }
+
+    .chapter-sub {
+      margin-top: 3px;
+      font-size: 12.5px;
+      color: var(--ink-secondary);
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .running-flag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-vermilion);
+    }
+
+    .col-progress {
+      width: 130px;
+      white-space: nowrap;
+    }
+
+    .progress-inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mini-bar {
+      width: 56px;
+      height: 5px;
+      border-radius: 3px;
+      background: var(--bg-track);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .mini-bar-fill {
+      height: 100%;
+      background: var(--ink-primary);
+    }
+    .mini-bar-fill.full { background: var(--sem-emerald); }
+    .mini-bar-fill.mid { background: var(--sem-cobalt); }
+
+    .pct-text {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-primary);
+    }
+    .pct-text.full { color: var(--sem-emerald); }
+
+    .col-score {
+      width: 104px;
+      white-space: nowrap;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .score-val {
+      color: var(--sem-emerald);
+    }
+    .score-empty {
+      color: var(--ink-secondary);
+      font-weight: 400;
+    }
+
+    .col-actions {
+      width: 268px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .action-group {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .act-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      height: 28px;
+      padding: 0 10px;
+      border-radius: var(--radius-xs);
+      font-size: 12.5px;
+      font-weight: 600;
+      background: var(--bg-surface);
+      border: 1px solid var(--hairline-strong);
+      cursor: pointer;
+      transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+    }
+    .act-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .act-slide {
+      color: var(--sem-cobalt);
+      border-color: rgba(36, 84, 166, 0.32);
+    }
+    .act-slide:hover:not(:disabled) {
+      background: var(--sem-cobalt-tint);
+      border-color: var(--sem-cobalt);
+    }
+
+    .act-ai {
+      color: var(--sem-emerald);
+      border-color: rgba(21, 122, 70, 0.32);
+    }
+    .act-ai:hover:not(:disabled) {
+      background: var(--sem-emerald-tint);
+      border-color: var(--sem-emerald);
+    }
+
+    .act-manual {
+      color: var(--sem-ochre);
+      border-color: rgba(180, 83, 9, 0.32);
+    }
+    .act-manual:hover:not(:disabled) {
+      background: var(--sem-ochre-tint);
+      border-color: var(--sem-ochre);
+    }
+
+    .type-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: var(--radius-xs);
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .type-tag.ai {
+      color: var(--sem-emerald);
+      background: var(--sem-emerald-tint);
+      border-color: rgba(21, 122, 70, 0.22);
+    }
+    .type-tag.slide {
+      color: var(--sem-cobalt);
+      background: var(--sem-cobalt-tint);
+      border-color: rgba(36, 84, 166, 0.22);
+    }
+    .type-tag.manual {
+      color: var(--sem-ochre);
+      background: var(--sem-ochre-tint);
+      border-color: rgba(180, 83, 9, 0.22);
+    }
+
+    .table-empty {
+      padding: 36px 20px;
+      text-align: center;
+      color: var(--ink-secondary);
+      font-size: 14px;
+    }
+
+    /* Inspector Form Controls (Apple HIG) */
+    .control-block {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .control-block:last-child {
+      padding-bottom: 0;
+      margin-bottom: 0;
+      border-bottom: none;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-primary);
+    }
+
+    .field-hint {
+      font-size: 12px;
+      color: var(--ink-secondary);
+    }
+
+    .field-error {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent-vermilion);
+    }
+
+    /* Apple Pop-up Picker */
+    .picker-wrap {
+      position: relative;
+      display: block;
+    }
+
+    .picker-select {
+      width: 100%;
+      height: 36px;
+      padding: 0 34px 0 11px;
+      appearance: none;
+      -webkit-appearance: none;
+      background: var(--bg-surface);
+      border: 1px solid var(--hairline-strong);
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--ink-primary);
+      cursor: pointer;
+    }
+    .picker-select:hover {
+      border-color: var(--ink-secondary);
+    }
+    .picker-select:focus {
+      outline: none;
+      border-color: var(--ink-primary);
+      box-shadow: 0 0 0 2px rgba(17, 17, 19, 0.08);
+    }
+
+    .picker-chevron {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: var(--ink-secondary);
+    }
+
+    /* Range Steppers + TextFields */
+    .range-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .range-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stepper-field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stepper-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-secondary);
+    }
+
+    .stepper-box {
+      display: flex;
+      align-items: stretch;
+      height: 34px;
+      border: 1px solid var(--hairline-strong);
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      overflow: hidden;
+    }
+    .stepper-box.is-invalid {
+      border-color: var(--accent-vermilion);
+    }
+
+    .stepper-input {
+      width: 100%;
+      min-width: 0;
+      border: none;
+      background: transparent;
+      padding: 0 8px;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--ink-primary);
+    }
+    .stepper-input:focus {
+      outline: none;
+    }
+    .stepper-input::-webkit-inner-spin-button,
+    .stepper-input::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .stepper-btn {
+      width: 30px;
+      flex-shrink: 0;
+      border: none;
+      background: var(--bg-paper);
+      color: var(--ink-primary);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.12s ease;
+    }
+    .stepper-btn:first-of-type {
+      border-right: 1px solid var(--hairline);
+    }
+    .stepper-btn:last-of-type {
+      border-left: 1px solid var(--hairline);
+    }
+    .stepper-btn:hover {
+      background: var(--bg-track);
+    }
+
+    .url-row {
+      display: flex;
+      align-items: stretch;
+      gap: 8px;
+    }
+
+    .url-input-wrap {
+      position: relative;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .url-input {
+      padding-right: 30px;
+      font-size: 13px;
+    }
+
+    /* Inspector Tab Panel (Terminal SSE | Lịch sử điểm) */
+    .inspector-tabs-head {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--hairline);
+      background: var(--bg-paper);
+    }
+
+    .inspector-tabs-head .segmented {
+      width: 100%;
+    }
+
+    .terminal-shell {
+      background: var(--bg-terminal);
+      color: var(--ink-on-dark);
+      border-bottom-left-radius: var(--radius-md);
+      border-bottom-right-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 14px;
+      background: var(--bg-terminal-bar);
+      border-bottom: 1px solid #2C2C30;
+      font-size: 12px;
+      color: var(--ink-muted-dark);
+    }
+
+    .terminal-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .terminal-bar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Apple HIG Switch (strictly inside Inspector body, never toolbar) */
+    .switch-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .switch-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink-on-dark);
+    }
+
+    .apple-switch {
+      position: relative;
+      width: 38px;
+      height: 22px;
+      border-radius: var(--radius-pill);
+      border: 1px solid #4E4E55;
+      background: #35353B;
+      padding: 0;
+      cursor: pointer;
+      transition: background-color 0.18s ease, border-color 0.18s ease;
+    }
+
+    .apple-switch[aria-checked="true"] {
+      background: var(--sem-emerald);
+      border-color: var(--sem-emerald);
+    }
+
+    .apple-switch-knob {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.18s ease;
+    }
+
+    .apple-switch[aria-checked="true"] .apple-switch-knob {
+      transform: translateX(16px);
+    }
+
+    .switch-glyph {
+      width: 9px;
+      height: 9px;
+      stroke: var(--sem-emerald);
+      stroke-width: 2.2;
+      fill: none;
+      opacity: 0;
+      transition: opacity 0.14s ease;
+    }
+    .apple-switch[aria-checked="true"] .switch-glyph {
+      opacity: 1;
+    }
+
+    .btn-terminal-clear {
+      height: 24px;
+      padding: 0 9px;
+      border-radius: var(--radius-xs);
+      border: 1px solid #3C3C42;
+      background: #27272C;
+      color: var(--ink-on-dark);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .btn-terminal-clear:hover {
+      background: #34343B;
+      border-color: #55555E;
+    }
+
+    .terminal-log {
+      height: 360px;
+      overflow-y: auto;
+      padding: 12px 14px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .log-line {
+      margin-bottom: 4px;
+      word-break: break-word;
+      color: var(--ink-on-dark);
+    }
+    .log-ok { color: #5EEAD4; }
+    .log-err { color: #F87171; }
+    .log-ai { color: #6EE7B7; }
+    .log-slide { color: #93C5FD; }
+    .log-start { color: #FCD34D; }
+    .log-result { color: #FDE047; font-weight: 600; }
+    .log-stop { color: #FB7185; }
+    .log-sys { color: #A8A69E; }
+
+    /* History Feed */
+    .history-feed {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .history-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--hairline);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .history-item:last-child {
+      border-bottom: none;
+    }
+
+    .history-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .history-time {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--ink-secondary);
+    }
+
+    .history-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--ink-primary);
+      line-height: 1.35;
+    }
+
+    .history-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--ink-secondary);
+    }
+
+    .history-score {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--sem-emerald);
+      white-space: nowrap;
+    }
+
+    /* Apple-style Modal Sheets */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(17, 17, 19, 0.42);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop[hidden] {
+      display: none;
+    }
+
+    .sheet {
+      width: 100%;
+      max-width: 540px;
+      max-height: calc(100vh - 40px);
+      background: var(--bg-surface);
+      border: 1px solid var(--hairline-strong);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 24px 48px rgba(17, 17, 19, 0.16);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sheet-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 22px 14px;
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .sheet-title {
+      margin: 0;
+      font-family: var(--font-editorial);
+      font-size: 1.45rem;
+      font-weight: 600;
+      line-height: 1.15;
+      color: var(--ink-primary);
+    }
+
+    .sheet-subtitle {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: var(--ink-secondary);
+    }
+
+    .sheet-close {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid var(--hairline);
+      background: var(--bg-paper);
+      color: var(--ink-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .sheet-close:hover {
+      background: var(--bg-track);
+      color: var(--ink-primary);
+    }
+
+    .sheet-body {
+      padding: 18px 22px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .sheet-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 14px 22px;
+      border-top: 1px solid var(--hairline);
+      background: var(--bg-paper);
+    }
+
+    /* Tools Pill List inside Settings Sheet */
+    .tools-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tool-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--hairline);
+      background: var(--bg-paper);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink-secondary);
+    }
+    .tool-chip.available {
+      border-color: rgba(21, 122, 70, 0.3);
+      background: var(--sem-emerald-tint);
+      color: var(--sem-emerald);
+      font-weight: 600;
+    }
+
+    /* Radio Group List inside Settings Sheet */
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .radio-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--hairline);
+      cursor: pointer;
+      background: var(--bg-surface);
+      transition: background-color 0.12s ease;
+    }
+    .radio-row:last-child {
+      border-bottom: none;
+    }
+    .radio-row:hover {
+      background: var(--bg-hover);
+    }
+
+    .radio-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .radio-row input[type="radio"] {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      accent-color: var(--ink-primary);
+      cursor: pointer;
+    }
+
+    .radio-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--ink-primary);
+    }
+
+    .radio-desc {
+      font-size: 12px;
+      color: var(--ink-secondary);
+    }
+
+    /* Cache Stat Card inside Cache Sheet */
+    .cache-stat-box {
+      padding: 18px;
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-md);
+      background: var(--bg-paper);
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .cache-number {
+      font-family: var(--font-editorial);
+      font-size: 2.5rem;
+      font-weight: 600;
+      line-height: 1;
+      color: var(--ink-primary);
+    }
+
+    .confirm-box {
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(201, 59, 43, 0.35);
+      background: var(--accent-vermilion-tint);
+      font-size: 13px;
+      color: var(--ink-primary);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .confirm-box[hidden] {
+      display: none;
+    }
+
+    /* Subtle Inline Toast Notification */
+    .toast-region {
+      position: fixed;
+      bottom: 20px;
+      right: 24px;
+      z-index: 120;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .toast {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 360px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--ink-primary);
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 10px 24px rgba(17, 17, 19, 0.22);
+    }
+    .toast.is-error {
+      background: var(--accent-vermilion);
+    }
+    .toast.is-success {
+      background: var(--sem-emerald);
+    }
+
+    /* Responsive Rules (1440px, 1024px, 375px) */
+    @media (max-width: 1120px) {
+      .masthead-inner,
+      .workspace {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+      .workspace {
+        gap: 20px;
+      }
+      .col-actions {
+        width: auto;
+      }
+    }
+
+    @media (max-width: 960px) {
+      .masthead-main {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 20px;
+      }
+      .masthead-kpi-zone {
+        align-items: flex-start;
+        padding-top: 14px;
+        border-top: 1px solid var(--hairline);
+      }
+      .kpi-submetrics {
+        align-items: flex-start;
+      }
+      .cta-row {
+        justify-content: flex-start;
+      }
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+      .inspector-pane {
+        position: static;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .masthead-inner,
+      .workspace {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+      .pipeline-stages {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .stage-cell {
+        border-bottom: 1px solid var(--hairline);
+      }
+      .stage-cell:nth-child(2n) {
+        border-right: none;
+      }
+      .curriculum-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .toolbar-segments {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .segmented {
+        width: 100%;
+      }
+      .segmented-option label {
+        padding: 6px 6px;
+        font-size: 12.5px;
+      }
+      .search-wrap {
+        max-width: none;
+        width: 100%;
+      }
+      .cta-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+      }
+      .col-actions {
+        white-space: normal;
+      }
+      .action-group {
+        justify-content: flex-start;
+      }
+      .toast-region {
+        left: 14px;
+        right: 14px;
+        bottom: 14px;
+      }
+      .toast {
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="editorial-rule" aria-hidden="true"></div>
+
+  <!-- Full-width Top Editorial Masthead -->
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="masthead-kicker">
+        <div class="kicker-left">
+          <span class="kicker-brand">EDUX ULTIMATE LIFEFORM v3.0</span>
+          <span class="kicker-divider" aria-hidden="true">/</span>
+          <span>CMCU LMS Autonomous Agent</span>
+        </div>
+        <div class="mode-pill" id="connection-pill">
+          <span class="status-dot connected" id="connection-dot" aria-hidden="true"></span>
+          <span id="connection-label">Chrome Cổng 9222 · Đã kết nối</span>
+        </div>
+      </div>
+
+      <div class="masthead-main">
+        <div class="masthead-subject">
+          <div class="subject-eyebrow">
+            <span>Học phần đang điều khiển</span>
+          </div>
+          <h1 class="subject-title" id="subject-name">Công nghệ phần mềm - K4</h1>
+
+          <div class="masthead-meta">
+            <span class="meta-item">
+              <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg>
+              <span>Chrome Cổng <strong class="tabular">9222</strong></span>
+            </span>
+            <span class="meta-sep" aria-hidden="true"></span>
+            <span class="meta-item">
+              <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"/></svg>
+              <span>Cache: <strong class="tabular" id="meta-cache-count">148</strong> câu</span>
+            </span>
+            <span class="meta-sep" aria-hidden="true"></span>
+            <span class="meta-item">
+              <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17l6-6-6-6M12 19h8"/></svg>
+              <span>AI CLI: <strong id="meta-ai-cli">antigravity · gemini-3.8-flash-low</strong></span>
+            </span>
+            <span class="meta-sep" aria-hidden="true"></span>
+            <div class="meta-actions">
+              <button type="button" class="btn btn-sm" id="btn-open-settings">
+                <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.77 1 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Cài đặt</span>
+              </button>
+              <button type="button" class="btn btn-sm" id="btn-open-cache">
+                <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>
+                <span>Cache</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="masthead-kpi-zone">
+          <div class="kpi-readout">
+            <div class="kpi-submetrics">
+              <span id="kpi-caption">Hoàn thành học phần</span>
+              <span class="kpi-timer tabular" id="kpi-timer">00:00 · Điểm gần nhất: 9.45/10</span>
+            </div>
+            <div class="kpi-giant tabular" id="kpi-percent">53%</div>
+          </div>
+
+          <div class="cta-row">
+            <button type="button" class="btn btn-primary" id="btn-solve-current">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+              <span>Giải bài đang mở</span>
+            </button>
+            <button type="button" class="btn btn-cobalt" id="btn-run-slide">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="13 19 22 12 13 5 13 19"/><polygon points="2 19 11 12 2 5 2 19"/></svg>
+              <span>Chạy Slide</span>
+            </button>
+            <button type="button" class="btn" id="btn-scan-course">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              <span>Quét lại môn</span>
+            </button>
+            <button type="button" class="btn btn-stop" id="btn-stop-task" disabled>
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg>
+              <span>Dừng tác vụ</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Asymmetric 68% / 32% Two-Column Workspace -->
+  <main class="workspace">
+    <!-- Left Primary Workspace (68%) -->
+    <section class="primary-pane" aria-label="Tiến trình và danh sách chương trình học">
+      <!-- Horizontal 4-Stage Pipeline Sequencer -->
+      <section class="pipeline-panel" aria-label="Quy trình thực thi 4 bước">
+        <div class="pipeline-top">
+          <div class="pipeline-step-status">
+            <span class="status-dot" id="pipeline-dot" aria-hidden="true"></span>
+            <span class="pipeline-step-text" id="step-label">Sẵn sàng nhận lệnh</span>
+          </div>
+          <span class="pipeline-fraction tabular" id="progress-fraction">0 / 0</span>
+        </div>
+
+        <div class="pipeline-stages" role="list">
+          <div class="stage-cell" id="stage-1" role="listitem">
+            <div class="stage-head">
+              <span class="stage-num tabular">01</span>
+              <span class="stage-badge" data-stage-badge="1">Chờ</span>
+            </div>
+            <div class="stage-name">Quét đề bài</div>
+          </div>
+          <div class="stage-cell" id="stage-2" role="listitem">
+            <div class="stage-head">
+              <span class="stage-num tabular">02</span>
+              <span class="stage-badge" data-stage-badge="2">Chờ</span>
+            </div>
+            <div class="stage-name">AI Coding CLI</div>
+          </div>
+          <div class="stage-cell" id="stage-3" role="listitem">
+            <div class="stage-head">
+              <span class="stage-num tabular">03</span>
+              <span class="stage-badge" data-stage-badge="3">Chờ</span>
+            </div>
+            <div class="stage-name">Tích chọn DOM</div>
+          </div>
+          <div class="stage-cell" id="stage-4" role="listitem">
+            <div class="stage-head">
+              <span class="stage-num tabular">04</span>
+              <span class="stage-badge" data-stage-badge="4">Chờ</span>
+            </div>
+            <div class="stage-name">Rà soát &amp; Nộp bài</div>
+          </div>
+        </div>
+
+        <div class="pipeline-bar-track" aria-hidden="true">
+          <div class="pipeline-bar-fill" id="pipeline-bar-fill"></div>
+        </div>
+      </section>
+
+      <!-- Curriculum Toolbar -->
+      <div class="curriculum-toolbar">
+        <div class="toolbar-segments">
+          <!-- Pure-text Apple HIG Segmented Control: View Mode -->
+          <div class="segmented" role="radiogroup" aria-label="Chế độ hiển thị">
+            <div class="segmented-option">
+              <input type="radio" name="viewMode" id="view-chapters" value="chapters" checked>
+              <label for="view-chapters">Theo Chương</label>
+            </div>
+            <div class="segmented-option">
+              <input type="radio" name="viewMode" id="view-details" value="details">
+              <label for="view-details">Chi tiết</label>
+            </div>
+          </div>
+
+          <!-- Pure-text Apple HIG Segmented Control: Type Filter -->
+          <div class="segmented" role="radiogroup" aria-label="Lọc theo loại học liệu">
+            <div class="segmented-option">
+              <input type="radio" name="filterType" id="filter-all" value="all" checked>
+              <label for="filter-all">Tất cả</label>
+            </div>
+            <div class="segmented-option">
+              <input type="radio" name="filterType" id="filter-ai" value="ai">
+              <label for="filter-ai">Bài tập AI</label>
+            </div>
+            <div class="segmented-option">
+              <input type="radio" name="filterType" id="filter-manual" value="manual">
+              <label for="filter-manual">Bài tập</label>
+            </div>
+            <div class="segmented-option">
+              <input type="radio" name="filterType" id="filter-slide" value="slide">
+              <label for="filter-slide">Slide</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Apple Search Field -->
+        <div class="search-wrap">
+          <svg class="icon icon-sm search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="search" class="field-input search-input" id="search-input" placeholder="Tìm chương, tuần hoặc bài..." aria-label="Tìm kiếm chương trình học">
+          <button type="button" class="clear-btn" id="btn-clear-search" aria-label="Xóa từ khóa tìm kiếm" hidden>
+            <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Hairline Editorial Curriculum Table -->
+      <section class="table-surface" aria-label="Danh sách chương và học liệu">
+        <div class="table-meta-bar">
+          <span id="table-summary-text" class="tabular">Hiển thị 8 chương học</span>
+          <span id="table-mode-note">Chế độ gom nhóm theo tuần học</span>
+        </div>
+        <div class="table-scroll">
+          <table class="curriculum-table">
+            <thead id="curriculum-thead"></thead>
+            <tbody id="curriculum-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <!-- Right Sticky Inspector Pane (32%) -->
+    <aside class="inspector-pane" aria-label="Điều khiển nâng cao và nhật ký">
+      <!-- Section 1: Điều khiển nâng cao -->
+      <section class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Điều khiển nâng cao</h2>
+          <span class="field-hint">Tùy chọn thực thi</span>
+        </div>
+        <div class="panel-body">
+          <!-- Slide Speed Picker -->
+          <div class="control-block">
+            <label class="field-label" for="slide-speed-select">Tốc độ Slide</label>
+            <div class="picker-wrap">
+              <select class="picker-select" id="slide-speed-select">
+                <option value="0.25" selected>0.25s · Nhanh (3/3)</option>
+                <option value="0.50">0.50s · Cân bằng</option>
+                <option value="1.00">1.00s · Chậm chắc</option>
+              </select>
+              <svg class="icon icon-sm picker-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg>
+            </div>
+            <span class="field-hint">Áp dụng cho CMCU-Vạn-Năng V3.2 FIX</span>
+          </div>
+
+          <!-- Range Steppers + TextFields -->
+          <div class="control-block">
+            <div class="range-header">
+              <span class="field-label">Giải theo khoảng câu</span>
+              <button type="button" class="btn btn-sm btn-primary" id="btn-solve-range">Chạy khoảng</button>
+            </div>
+            <div class="range-grid">
+              <div class="stepper-field-group">
+                <label class="stepper-label" for="input-start-q">Từ câu</label>
+                <div class="stepper-box" id="box-start-q">
+                  <button type="button" class="stepper-btn" id="btn-start-dec" aria-label="Giảm Từ câu">−</button>
+                  <input type="number" class="stepper-input tabular" id="input-start-q" value="1" min="1" inputmode="numeric">
+                  <button type="button" class="stepper-btn" id="btn-start-inc" aria-label="Tăng Từ câu">+</button>
+                </div>
+              </div>
+              <div class="stepper-field-group">
+                <label class="stepper-label" for="input-end-q">Đến câu</label>
+                <div class="stepper-box" id="box-end-q">
+                  <button type="button" class="stepper-btn" id="btn-end-dec" aria-label="Giảm Đến câu">−</button>
+                  <input type="number" class="stepper-input tabular" id="input-end-q" value="20" min="1" inputmode="numeric">
+                  <button type="button" class="stepper-btn" id="btn-end-inc" aria-label="Tăng Đến câu">+</button>
+                </div>
+              </div>
+            </div>
+            <span class="field-error" id="range-error" hidden>Giá trị phải lớn hơn hoặc bằng 1 và Từ câu nhỏ hơn hoặc bằng Đến câu.</span>
+          </div>
+
+          <!-- Direct URL Input -->
+          <div class="control-block">
+            <label class="field-label" for="input-direct-url">Dán Link bài tập (URL)</label>
+            <div class="url-row">
+              <div class="url-input-wrap">
+                <input type="url" class="field-input url-input" id="input-direct-url" placeholder="https://edux.cmcu.edu.vn/..." autocomplete="off">
+                <button type="button" class="clear-btn" id="btn-clear-url" aria-label="Xóa liên kết URL" hidden>
+                  <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+              </div>
+              <button type="button" class="btn btn-sm" id="btn-solve-url">Giải URL</button>
+            </div>
+            <span class="field-error" id="url-error" hidden>Liên kết cần bắt đầu bằng https://edux.cmcu.edu.vn/</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Tab View (Terminal SSE | Lịch sử điểm) -->
+      <section class="panel">
+        <div class="inspector-tabs-head">
+          <div class="segmented" role="tablist" aria-label="Nhật ký và lịch sử điểm">
+            <div class="segmented-option">
+              <input type="radio" name="inspectorTab" id="tab-terminal" value="terminal" checked>
+              <label for="tab-terminal" role="tab" aria-selected="true" aria-controls="pane-terminal">Terminal SSE</label>
+            </div>
+            <div class="segmented-option">
+              <input type="radio" name="inspectorTab" id="tab-history" value="history">
+              <label for="tab-history" role="tab" aria-selected="false" aria-controls="pane-history">Lịch sử điểm</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab A: Terminal SSE -->
+        <div id="pane-terminal" role="tabpanel" aria-labelledby="tab-terminal">
+          <div class="terminal-shell">
+            <div class="terminal-bar">
+              <div class="terminal-bar-left">
+                <span class="status-dot connected" id="sse-dot" aria-hidden="true"></span>
+                <span id="sse-status-label">Luồng nhật ký SSE</span>
+              </div>
+              <div class="terminal-bar-actions">
+                <div class="switch-control">
+                  <span class="switch-label" id="autoscroll-label">Tự cuộn</span>
+                  <button type="button" class="apple-switch" id="switch-autoscroll" role="switch" aria-checked="true" aria-labelledby="autoscroll-label">
+                    <span class="apple-switch-knob">
+                      <svg class="switch-glyph" viewBox="0 0 12 12" aria-hidden="true"><polyline points="2.5 6.5 5 9 9.5 3.5"/></svg>
+                    </span>
+                  </button>
+                </div>
+                <button type="button" class="btn-terminal-clear" id="btn-clear-logs">Xóa</button>
+              </div>
+            </div>
+            <div class="terminal-log" id="terminal-log" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <!-- Tab B: Lịch sử điểm -->
+        <div id="pane-history" role="tabpanel" aria-labelledby="tab-history" hidden>
+          <div class="history-feed" id="history-feed"></div>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <!-- Modal Sheet 1: Cấu hình AI Coding CLI -->
+  <div class="modal-backdrop" id="modal-settings" role="dialog" aria-modal="true" aria-labelledby="settings-title" hidden>
+    <div class="sheet">
+      <div class="sheet-header">
+        <div>
+          <h2 class="sheet-title" id="settings-title">Cấu hình AI Coding CLI</h2>
+          <p class="sheet-subtitle">Định tuyến lệnh AI cục bộ qua CLI, không cần API key thủ công.</p>
+        </div>
+        <button type="button" class="sheet-close" id="btn-close-settings" aria-label="Đóng cửa sổ cài đặt">
+          <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="sheet-body">
+        <div>
+          <span class="field-label" style="margin-bottom: 8px;">Công cụ CLI phát hiện trên máy</span>
+          <div class="tools-list" id="detected-tools-list"></div>
+        </div>
+
+        <div>
+          <span class="field-label" style="margin-bottom: 8px;">Nhà cung cấp CLI (Provider)</span>
+          <div class="radio-group" role="radiogroup" aria-label="Chọn nhà cung cấp AI Coding CLI">
+            <label class="radio-row">
+              <span class="radio-left">
+                <input type="radio" name="aiProvider" value="auto">
+                <span class="radio-title">Tự động (Auto)</span>
+              </span>
+              <span class="radio-desc">Ưu tiên CLI khả dụng</span>
+            </label>
+            <label class="radio-row">
+              <span class="radio-left">
+                <input type="radio" name="aiProvider" value="antigravity" checked>
+                <span class="radio-title">Antigravity CLI (agy)</span>
+              </span>
+              <span class="radio-desc">Tối ưu cho CMCU LMS</span>
+            </label>
+            <label class="radio-row">
+              <span class="radio-left">
+                <input type="radio" name="aiProvider" value="codex">
+                <span class="radio-title">OpenAI Codex CLI</span>
+              </span>
+              <span class="radio-desc">codex exec cục bộ</span>
+            </label>
+            <label class="radio-row">
+              <span class="radio-left">
+                <input type="radio" name="aiProvider" value="claude">
+                <span class="radio-title">Anthropic Claude Code</span>
+              </span>
+              <span class="radio-desc">claude -p không tương tác</span>
+            </label>
+            <label class="radio-row">
+              <span class="radio-left">
+                <input type="radio" name="aiProvider" value="opencode">
+                <span class="radio-title">OpenCode CLI</span>
+              </span>
+              <span class="radio-desc">opencode run cục bộ</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="field-label" for="select-ai-model" style="margin-bottom: 6px;">Mô hình ngôn ngữ mặc định</label>
+          <div class="picker-wrap">
+            <select class="picker-select" id="select-ai-model">
+              <option value="gemini-3.8-flash-low">gemini-3.8-flash-low</option>
+              <option value="gemini-3.8-flash-medium">gemini-3.8-flash-medium</option>
+              <option value="gemini-4-argon-low">gemini-4-argon-low</option>
+              <option value="gemini-4-argon-medium">gemini-4-argon-medium</option>
+              <option value="claude-sonnet-5-5-low">claude-sonnet-5-5-low</option>
+              <option value="gpt-6-luna">gpt-6-luna</option>
+            </select>
+            <svg class="icon icon-sm picker-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg>
+          </div>
+        </div>
+
+        <div>
+          <span class="field-label" style="margin-bottom: 6px;">Mức độ suy luận (Effort)</span>
+          <div class="segmented" style="width: 100%;" role="radiogroup" aria-label="Mức độ suy luận AI">
+            <div class="segmented-option">
+              <input type="radio" name="aiEffort" id="effort-low" value="low" checked>
+              <label for="effort-low">Low</label>
+            </div>
+            <div class="segmented-option">
+              <input type="radio" name="aiEffort" id="effort-medium" value="medium">
+              <label for="effort-medium">Medium</label>
+            </div>
+            <div class="segmented-option">
+              <input type="radio" name="aiEffort" id="effort-high" value="high">
+              <label for="effort-high">High</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sheet-footer">
+        <button type="button" class="btn" id="btn-cancel-settings">Hủy</button>
+        <button type="button" class="btn btn-primary" id="btn-save-settings">Lưu cấu hình</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Sheet 2: Ngân hàng câu hỏi Cache -->
+  <div class="modal-backdrop" id="modal-cache" role="dialog" aria-modal="true" aria-labelledby="cache-title" hidden>
+    <div class="sheet">
+      <div class="sheet-header">
+        <div>
+          <h2 class="sheet-title" id="cache-title">Ngân hàng câu hỏi Cache</h2>
+          <p class="sheet-subtitle">Kho dữ liệu câu hỏi và đáp án đã lưu cục bộ trên máy.</p>
+        </div>
+        <button type="button" class="sheet-close" id="btn-close-cache" aria-label="Đóng cửa sổ Cache">
+          <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="sheet-body">
+        <div class="cache-stat-box">
+          <div>
+            <div class="field-label">Số câu hỏi đã lưu</div>
+            <div class="field-hint">Tự động đối chiếu trước khi gọi AI CLI</div>
+          </div>
+          <div class="cache-number tabular" id="modal-cache-count">148</div>
+        </div>
+
+        <p class="field-hint" style="margin: 0; font-size: 13px; line-height: 1.55;">
+          Xóa bộ nhớ đệm sẽ buộc hệ thống phân tích lại toàn bộ đề bài mới qua AI Coding CLI trong lần giải tiếp theo. Thao tác này không ảnh hưởng đến lịch sử điểm đã lưu.
+        </p>
+
+        <div class="confirm-box" id="cache-confirm-box" hidden>
+          <span>Bạn chắc chắn muốn xóa toàn bộ <strong class="tabular" id="confirm-cache-num">148</strong> câu hỏi trong Cache cục bộ?</span>
+          <div style="display: flex; gap: 8px; justify-content: flex-end;">
+            <button type="button" class="btn btn-sm" id="btn-cache-cancel-confirm">Giữ lại</button>
+            <button type="button" class="btn btn-sm btn-danger-solid" id="btn-cache-confirm-delete">Xác nhận xóa sạch</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sheet-footer">
+        <button type="button" class="btn" id="btn-close-cache-footer">Đóng</button>
+        <button type="button" class="btn btn-danger-outline" id="btn-request-clear-cache">Xóa toàn bộ Cache</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-region" id="toast-region" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const ALL_PROVIDERS = ['antigravity', 'codex', 'claude', 'opencode'];
+
+      const FALLBACK_ROWS = [
+        { stt: 1, week: 'Tuần 1', chapter: 'Chapter 1: Software Products', title: 'Slide bài giảng: Chapter 1 - Software Products', percent_tg: '100%', percent_val: 100, type: 'Slide bài giảng', target_type: 'slide', target_title: 'Chapter 1: Software Products', status: 'Hoàn thành', highest_score: '-', highest_score_val: 0 },
+        { stt: 2, week: 'Tuần 1', chapter: 'Chapter 1: Software Products', title: 'Bài tập AI: Chapter 1 - Software Products', percent_tg: '100%', percent_val: 100, type: 'Bài tập AI', target_type: 'ai', target_title: 'Chapter 1: Software Products', status: 'Đã nộp bài', highest_score: '9.45/10', highest_score_val: 9.45 },
+        { stt: 3, week: 'Tuần 1', chapter: 'Chapter 1: Software Products', title: 'Bài tập tự luyện: Chapter 1 - Software Products', percent_tg: '100%', percent_val: 100, type: 'Bài tập', target_type: 'manual', target_title: 'Chapter 1: Software Products', status: 'Đã nộp bài', highest_score: '9.00/10', highest_score_val: 9.0 },
+
+        { stt: 4, week: 'Tuần 2', chapter: 'Chapter 2: Agile Software Engineering', title: 'Slide bài giảng: Chapter 2 - Agile Software Engineering', percent_tg: '100%', percent_val: 100, type: 'Slide bài giảng', target_type: 'slide', target_title: 'Chapter 2: Agile Software Engineering', status: 'Hoàn thành', highest_score: '-', highest_score_val: 0 },
+        { stt: 5, week: 'Tuần 2', chapter: 'Chapter 2: Agile Software Engineering', title: 'Bài tập AI: Chapter 2 - Agile Software Engineering', percent_tg: '100%', percent_val: 100, type: 'Bài tập AI', target_type: 'ai', target_title: 'Chapter 2: Agile Software Engineering', status: 'Đã nộp bài', highest_score: '9.20/10', highest_score_val: 9.2 },
+
+        { stt: 6, week: 'Tuần 3', chapter: 'Agile Software Engineering Features, Scenarios and Stories', title: 'Slide bài giảng: Features, Scenarios and Stories', percent_tg: '100%', percent_val: 100, type: 'Slide bài giảng', target_type: 'slide', target_title: 'Agile Software Engineering Features, Scenarios and Stories', status: 'Hoàn thành', highest_score: '-', highest_score_val: 0 },
+        { stt: 7, week: 'Tuần 3', chapter: 'Agile Software Engineering Features, Scenarios and Stories', title: 'Bài tập AI: Features, Scenarios and Stories', percent_tg: '100%', percent_val: 100, type: 'Bài tập AI', target_type: 'ai', target_title: 'Agile Software Engineering Features, Scenarios and Stories', status: 'Đã nộp bài', highest_score: '9.2/10', highest_score_val: 9.2 },
+        { stt: 8, week: 'Tuần 3', chapter: 'Agile Software Engineering Features, Scenarios and Stories', title: 'Bài tập tình huống: Features & User Stories', percent_tg: '100%', percent_val: 100, type: 'Bài tập', target_type: 'manual', target_title: 'Agile Software Engineering Features, Scenarios and Stories', status: 'Đã nộp bài', highest_score: '8.8/10', highest_score_val: 8.8 },
+
+        { stt: 9, week: 'Tuần 4', chapter: 'Chapter 3: Requirements Engineering', title: 'Slide bài giảng: Chapter 3 - Requirements Engineering', percent_tg: '100%', percent_val: 100, type: 'Slide bài giảng', target_type: 'slide', target_title: 'Chapter 3: Requirements Engineering', status: 'Hoàn thành', highest_score: '-', highest_score_val: 0 },
+        { stt: 10, week: 'Tuần 4', chapter: 'Chapter 3: Requirements Engineering', title: 'Bài tập AI: Chapter 3 - Requirements Engineering', percent_tg: '80%', percent_val: 80, type: 'Bài tập AI', target_type: 'ai', target_title: 'Chapter 3: Requirements Engineering', status: 'Đang làm', highest_score: '-', highest_score_val: 0 },
+        { stt: 11, week: 'Tuần 4', chapter: 'Chapter 3: Requirements Engineering', title: 'Bài tập thực hành: Requirements Modeling', percent_tg: '60%', percent_val: 60, type: 'Bài tập', target_type: 'manual', target_title: 'Chapter 3: Requirements Engineering', status: 'Đang làm', highest_score: '-', highest_score_val: 0 },
+
+        { stt: 12, week: 'Tuần 5', chapter: 'Chapter 4: Software Architecture & Design', title: 'Slide bài giảng: Chapter 4 - Software Architecture', percent_tg: '60%', percent_val: 60, type: 'Slide bài giảng', target_type: 'slide', target_title: 'Chapter 4: Software Architecture & Design', status: 'Đang học', highest_score: '-', highest_score_val: 0 },
+        { stt: 13, week: 'Tuần 5', chapter: 'Chapter 4: Software Architecture & Design', title: 'Bài tập AI: Chapter 4 - Architecture & Design', percent_tg: '30%', percent_val: 30, type: 'Bài tập AI', target_type: 'ai', target_title: 'Chapter 4: Software Architecture & Design', status: 'Chưa hoàn thành', highest_score: '-', highest_score_val: 0 },
+
+        { stt: 14, week: 'Tuần 6', chapter: 'Chapter 5: Cloud & Microservices Patterns', title: 'Slide bài giảng: Chapter 5 - Cloud & Microservices', percent_tg: '0%', percent_val: 0, type: 'Slide bài giảng', target_type: 'slide', target_title: 'Chapter 5: Cloud & Microservices Patterns', status: 'Chưa học', highest_score: '-', highest_score_val: 0 },
+        { stt: 15, week: 'Tuần 6', chapter: 'Chapter 5: Cloud & Microservices Patterns', title: 'Bài tập AI: Chapter 5 - Cloud & Microservices', percent_tg: '0%', percent_val: 0, type: 'Bài tập AI', target_type: 'ai', target_title: 'Chapter 5: Cloud & Microservices Patterns', status: 'Chưa làm', highest_score: '-', highest_score_val: 0 },
+        { stt: 16, week: 'Tuần 6', chapter: 'Chapter 5: Cloud & Microservices Patterns', title: 'Bài tập phân tích dịch vụ Cloud', percent_tg: '0%', percent_val: 0, type: 'Bài tập', target_type: 'manual', target_title: 'Chapter 5: Cloud & Microservices Patterns', status: 'Chưa làm', highest_score: '-', highest_score_val: 0 },
+
+        { stt: 17, week: 'Tuần 7', chapter: 'Chapter 6: Software Testing & Verification', title: 'Slide bài giảng: Chapter 6 - Testing & Verification', percent_tg: '0%', percent_val: 0, type: 'Slide bài giảng', target_type: 'slide', target_title: 'Chapter 6: Software Testing & Verification', status: 'Chưa học', highest_score: '-', highest_score_val: 0 },
+        { stt: 18, week: 'Tuần 7', chapter: 'Chapter 6: Software Testing & Verification', title: 'Bài tập AI: Chapter 6 - Software Testing', percent_tg: '0%', percent_val: 0, type: 'Bài tập AI', target_type: 'ai', target_title: 'Chapter 6: Software Testing & Verification', status: 'Chưa làm', highest_score: '-', highest_score_val: 0 },
+        { stt: 19, week: 'Tuần 7', chapter: 'Chapter 6: Software Testing & Verification', title: 'Bài tập viết ca kiểm thử đơn vị', percent_tg: '0%', percent_val: 0, type: 'Bài tập', target_type: 'manual', target_title: 'Chapter 6: Software Testing & Verification', status: 'Chưa làm', highest_score: '-', highest_score_val: 0 },
+
+        { stt: 20, week: 'Tuần 8', chapter: 'Tổng ôn & Đánh giá hệ thống Agile', title: 'Bài tập AI: Tổng ôn & Đánh giá hệ thống Agile', percent_tg: '0%', percent_val: 0, type: 'Bài tập AI', target_type: 'ai', target_title: 'Tổng ôn & Đánh giá hệ thống Agile', status: 'Chưa làm', highest_score: '-', highest_score_val: 0 },
+        { stt: 21, week: 'Tuần 8', chapter: 'Tổng ôn & Đánh giá hệ thống Agile', title: 'Bài tập tổng hợp cuối kỳ Agile', percent_tg: '0%', percent_val: 0, type: 'Bài tập', target_type: 'manual', target_title: 'Tổng ôn & Đánh giá hệ thống Agile', status: 'Chưa làm', highest_score: '-', highest_score_val: 0 }
+      ];
+
+      const FALLBACK_HISTORY = [
+        { id: 1, time: '16:28:38', type: 'ai', title: 'Agile Software Engineering Features, Scenarios and Stories', detail: 'Công nghệ phần mềm - K4 (25/25 câu)', score: '9.2/10', status: 'Đã nộp bài' },
+        { id: 2, time: '16:13:46', type: 'ai', title: 'Chapter 2: Agile Software Engineering', detail: 'Công nghệ phần mềm - K4 (30/30 câu)', score: '9.20/10', status: 'Đã nộp bài' },
+        { id: 3, time: '15:54:15', type: 'ai', title: 'Chapter 1: Software Products', detail: 'Công nghệ phần mềm - K4 (30/30 câu)', score: '9.45/10', status: 'Đã nộp bài' },
+        { id: 4, time: '18:07:15', type: 'slide', title: 'Pháp lý và Đạo đức nghề nghiệp - Slide', detail: 'CMCU V3.2 FIX (35/35 trang)', score: '100% Trợ giảng', status: 'Hoàn thành' },
+        { id: 5, time: '18:02:42', type: 'manual', title: 'Bài tập trên màn hình', detail: 'Công nghệ phần mềm - K4 (20/20 câu)', score: '8.8/10', status: 'Đã nộp bài' }
+      ];
+
+      const INITIAL_LOGS = [
+        '[READY] Khởi tạo EDUX ULTIMATE LIFEFORM v3.0 — Giao diện điều khiển CMCU.',
+        '[OK] Kết nối phiên trình duyệt Chrome CDP Cổng 9222 thành công.',
+        '[CONFIG] AI CLI sẵn sàng: ANTIGRAVITY (gemini-3.8-flash-low, effort: low).',
+        '[CACHE] Đã nạp 148 câu hỏi từ kho lưu trữ cục bộ.',
+        '[SCAN] Nhận diện học phần: Công nghệ phần mềm - K4 (8 tuần học).',
+        '[KẾT QUẢ] Phiên gần nhất: Chapter 1: Software Products — 9.45/10 (Đã nộp bài).'
+      ];
+
+      const appState = {
+        offlineMode: window.location.protocol === 'file:',
+        chrome_connected: true,
+        subject_name: 'Công nghệ phần mềm - K4',
+        is_running: false,
+        current_task: '',
+        task_detail: '',
+        cache_count: 148,
+        progress_current: 0,
+        progress_total: 0,
+        progress_percent: 0,
+        step_label: 'Sẵn sàng nhận lệnh',
+        active_stage: 0,
+        elapsed_sec: 0,
+        ai_provider: 'antigravity',
+        ai_model: 'gemini-3.8-flash-low',
+        ai_effort: 'low',
+        available_tools: ['antigravity', 'codex', 'claude'],
+        last_score: '9.45/10',
+        history: FALLBACK_HISTORY.slice(),
+        chapter_scores: {
+          'Chapter 1: Software Products': '9.45/10',
+          'Chapter 2: Agile Software Engineering': '9.20/10',
+          'Agile Software Engineering Features, Scenarios and Stories': '9.2/10'
+        },
+        course_rows: FALLBACK_ROWS.map(r => Object.assign({}, r)),
+        viewMode: 'chapters',
+        filterType: 'all',
+        searchQuery: '',
+        inspectorTab: 'terminal',
+        autoScroll: true,
+        logs: INITIAL_LOGS.slice(),
+        simTimer: null,
+        pollTimer: null,
+        sse: null,
+        lastTriggerEl: null
+      };
+
+      const $ = id => document.getElementById(id);
+
+      const els = {
+        connectionDot: $('connection-dot'),
+        connectionLabel: $('connection-label'),
+        subjectName: $('subject-name'),
+        metaCacheCount: $('meta-cache-count'),
+        metaAiCli: $('meta-ai-cli'),
+        kpiCaption: $('kpi-caption'),
+        kpiTimer: $('kpi-timer'),
+        kpiPercent: $('kpi-percent'),
+
+        btnSolveCurrent: $('btn-solve-current'),
+        btnRunSlide: $('btn-run-slide'),
+        btnScanCourse: $('btn-scan-course'),
+        btnStopTask: $('btn-stop-task'),
+        btnOpenSettings: $('btn-open-settings'),
+        btnOpenCache: $('btn-open-cache'),
+
+        pipelineDot: $('pipeline-dot'),
+        stepLabel: $('step-label'),
+        progressFraction: $('progress-fraction'),
+        pipelineBarFill: $('pipeline-bar-fill'),
+
+        searchInput: $('search-input'),
+        btnClearSearch: $('btn-clear-search'),
+        tableSummaryText: $('table-summary-text'),
+        tableModeNote: $('table-mode-note'),
+        curriculumThead: $('curriculum-thead'),
+        curriculumTbody: $('curriculum-tbody'),
+
+        slideSpeedSelect: $('slide-speed-select'),
+        inputStartQ: $('input-start-q'),
+        inputEndQ: $('input-end-q'),
+        boxStartQ: $('box-start-q'),
+        boxEndQ: $('box-end-q'),
+        rangeError: $('range-error'),
+        btnSolveRange: $('btn-solve-range'),
+        btnStartDec: $('btn-start-dec'),
+        btnStartInc: $('btn-start-inc'),
+        btnEndDec: $('btn-end-dec'),
+        btnEndInc: $('btn-end-inc'),
+
+        inputDirectUrl: $('input-direct-url'),
+        btnClearUrl: $('btn-clear-url'),
+        btnSolveUrl: $('btn-solve-url'),
+        urlError: $('url-error'),
+
+        paneTerminal: $('pane-terminal'),
+        paneHistory: $('pane-history'),
+        sseDot: $('sse-dot'),
+        sseStatusLabel: $('sse-status-label'),
+        switchAutoscroll: $('switch-autoscroll'),
+        btnClearLogs: $('btn-clear-logs'),
+        terminalLog: $('terminal-log'),
+        historyFeed: $('history-feed'),
+
+        modalSettings: $('modal-settings'),
+        btnCloseSettings: $('btn-close-settings'),
+        btnCancelSettings: $('btn-cancel-settings'),
+        btnSaveSettings: $('btn-save-settings'),
+        detectedToolsList: $('detected-tools-list'),
+        selectAiModel: $('select-ai-model'),
+
+        modalCache: $('modal-cache'),
+        btnCloseCache: $('btn-close-cache'),
+        btnCloseCacheFooter: $('btn-close-cache-footer'),
+        modalCacheCount: $('modal-cache-count'),
+        confirmCacheNum: $('confirm-cache-num'),
+        cacheConfirmBox: $('cache-confirm-box'),
+        btnRequestClearCache: $('btn-request-clear-cache'),
+        btnCacheCancelConfirm: $('btn-cache-cancel-confirm'),
+        btnCacheConfirmDelete: $('btn-cache-confirm-delete'),
+
+        toastRegion: $('toast-region')
+      };
+
+      function escapeHtml(str) {
+        return String(str ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function formatTimer(sec) {
+        const s = Math.max(0, Number(sec) || 0);
+        const mins = String(Math.floor(s / 60)).padStart(2, '0');
+        const rem = String(s % 60).padStart(2, '0');
+        return mins + ':' + rem;
+      }
+
+      function nowTimeStr() {
+        const d = new Date();
+        return [d.getHours(), d.getMinutes(), d.getSeconds()]
+          .map(n => String(n).padStart(2, '0')).join(':');
+      }
+
+      function showToast(message, variant) {
+        const toast = document.createElement('div');
+        toast.className = 'toast' + (variant ? ' is-' + variant : '');
+        toast.textContent = message;
+        els.toastRegion.appendChild(toast);
+        setTimeout(() => {
+          toast.remove();
+        }, 3200);
+      }
+
+      function classifyLog(line) {
+        const upper = line.toUpperCase();
+        if (upper.includes('[X]') || upper.includes('[LỖI]') || upper.includes('ERROR')) return 'log-err';
+        if (upper.includes('[STOP]')) return 'log-stop';
+        if (upper.includes('[KẾT QUẢ]') || upper.includes('[RESULT]')) return 'log-result';
+        if (upper.includes('[OK]')) return 'log-ok';
+        if (upper.includes('[AI]')) return 'log-ai';
+        if (upper.includes('[SLIDE]') || upper.includes('[TURBO]')) return 'log-slide';
+        if (upper.includes('[START]') || upper.includes('[RA SOÁT]')) return 'log-start';
+        if (upper.includes('[CONFIG]') || upper.includes('[CACHE]') || upper.includes('[SCAN]') || upper.includes('[READY]')) return 'log-sys';
+        return '';
+      }
+
+      function appendLog(line) {
+        appState.logs.push(line);
+        if (appState.logs.length > 220) appState.logs.shift();
+        renderLogs();
+      }
+
+      function renderLogs() {
+        if (!appState.logs.length) {
+          els.terminalLog.innerHTML = '<div class="log-line log-sys">[Hệ thống] Đã làm sạch bộ đệm nhật ký.</div>';
+          return;
+        }
+        els.terminalLog.innerHTML = appState.logs.map(line => {
+          const cls = classifyLog(line);
+          return '<div class="log-line ' + cls + '">' + escapeHtml(line) + '</div>';
+        }).join('');
+        if (appState.autoScroll) {
+          els.terminalLog.scrollTop = els.terminalLog.scrollHeight;
+        }
+      }
+
+      function groupRowsByChapter(rows) {
+        const map = new Map();
+        rows.forEach((row, idx) => {
+          const weekKey = (row.week || ('Mục ' + (idx + 1))).trim();
+          const cleanName = (row.chapter || row.target_title || row.title || weekKey)
+            .replace(/^(Slide bài giảng|Bài tập AI|Bài tập tự luyện|Bài tập tình huống|Bài tập thực hành|Bài tập)\s*:\s*/i, '')
+            .trim();
+          const key = weekKey + '||' + cleanName;
+          if (!map.has(key)) {
+            map.set(key, {
+              key,
+              week: weekKey,
+              title: cleanName,
+              items: [],
+              actions: {},
+              percentSum: 0,
+              bestScoreVal: 0,
+              bestScoreText: '-'
+            });
+          }
+          const grp = map.get(key);
+          grp.items.push(row);
+          grp.percentSum += Number(row.percent_val || 0);
+          if (row.target_type && !grp.actions[row.target_type]) {
+            grp.actions[row.target_type] = row;
+          }
+          const sv = Number(row.highest_score_val || 0);
+          if (sv > grp.bestScoreVal && row.highest_score && row.highest_score !== '-') {
+            grp.bestScoreVal = sv;
+            grp.bestScoreText = row.highest_score;
+          }
+          const mapScore = appState.chapter_scores[cleanName];
+          if (mapScore && grp.bestScoreText === '-') {
+            grp.bestScoreText = mapScore;
+          }
+        });
+
+        return Array.from(map.values()).map(grp => {
+          const avg = grp.items.length ? Math.round(grp.percentSum / grp.items.length) : 0;
+          return Object.assign(grp, {
+            avgPercent: avg,
+            percentStr: avg + '%'
+          });
+        });
+      }
+
+      function computeCourseProgress() {
+        const chapters = groupRowsByChapter(appState.course_rows);
+        if (!chapters.length) return { percent: 0, doneCount: 0, totalCount: 0 };
+        const total = chapters.reduce((acc, c) => acc + c.avgPercent, 0);
+        const doneCount = chapters.filter(c => c.avgPercent >= 100).length;
+        return {
+          percent: Math.round(total / chapters.length),
+          doneCount,
+          totalCount: chapters.length
+        };
+      }
+
+      function renderMasthead() {
+        const dot = els.connectionDot;
+        dot.className = 'status-dot ' + (appState.is_running ? 'running' : (appState.chrome_connected ? 'connected' : 'disconnected'));
+
+        if (appState.offlineMode) {
+          els.connectionLabel.textContent = appState.is_running
+            ? 'Đang chạy mô phỏng cục bộ'
+            : 'Chrome Cổng 9222 · Chế độ Demo cục bộ';
+        } else {
+          els.connectionLabel.textContent = appState.chrome_connected
+            ? (appState.is_running ? 'Chrome Cổng 9222 · Đang thực thi' : 'Chrome Cổng 9222 · Đã kết nối')
+            : 'Chưa kết nối Chrome Cổng 9222';
+        }
+
+        els.subjectName.textContent = appState.subject_name || 'Chưa nhận diện môn';
+        els.metaCacheCount.textContent = String(appState.cache_count || 0);
+        els.metaAiCli.textContent = (appState.ai_provider || 'auto') + ' · ' + (appState.ai_model || 'gemini-3.8-flash-low');
+
+        const courseStats = computeCourseProgress();
+        const showLive = appState.is_running || (appState.progress_total > 0 && appState.progress_percent > 0);
+        const displayPct = showLive ? Math.round(appState.progress_percent || 0) : courseStats.percent;
+
+        els.kpiPercent.textContent = displayPct + '%';
+        els.kpiPercent.classList.toggle('is-running', appState.is_running);
+        els.kpiPercent.classList.toggle('is-done', !appState.is_running && displayPct >= 100);
+
+        if (appState.is_running) {
+          els.kpiCaption.textContent = appState.current_task || 'Đang thực thi tác vụ';
+        } else if (showLive) {
+          els.kpiCaption.textContent = 'Tiến độ tác vụ gần nhất';
+        } else {
+          els.kpiCaption.textContent = 'Hoàn thành học phần (' + courseStats.doneCount + '/' + courseStats.totalCount + ' chương)';
+        }
+
+        const scoreSnippet = appState.last_score ? ('Điểm gần nhất: ' + appState.last_score) : 'Chưa có điểm mới';
+        els.kpiTimer.textContent = formatTimer(appState.elapsed_sec) + ' · ' + scoreSnippet;
+
+        const running = appState.is_running;
+        els.btnSolveCurrent.disabled = running;
+        els.btnRunSlide.disabled = running;
+        els.btnScanCourse.disabled = running;
+        els.btnStopTask.disabled = !running;
+        els.btnStopTask.classList.toggle('active-stop', running);
+      }
+
+      function renderPipeline() {
+        const stage = Number(appState.active_stage || 0);
+        const pct = Math.max(0, Math.min(100, Number(appState.progress_percent || 0)));
+
+        els.pipelineDot.className = 'status-dot' + (appState.is_running ? ' running' : (pct >= 100 && stage >= 4 ? ' connected' : ''));
+        els.stepLabel.textContent = appState.step_label || 'Sẵn sàng nhận lệnh';
+        els.progressFraction.textContent = (appState.progress_current || 0) + ' / ' + (appState.progress_total || 0);
+
+        for (let i = 1; i <= 4; i++) {
+          const cell = $('stage-' + i);
+          const badge = cell.querySelector('[data-stage-badge]');
+          cell.classList.remove('is-active', 'is-done');
+          if (appState.is_running) {
+            if (i < stage) {
+              cell.classList.add('is-done');
+              badge.textContent = 'Xong';
+            } else if (i === stage) {
+              cell.classList.add('is-active');
+              badge.textContent = 'Đang chạy';
+            } else {
+              badge.textContent = 'Chờ';
+            }
+          } else if (stage >= 4 && pct >= 100) {
+            cell.classList.add('is-done');
+            badge.textContent = 'Xong';
+          } else {
+            badge.textContent = 'Chờ';
+          }
+        }
+
+        els.pipelineBarFill.style.width = pct + '%';
+        els.pipelineBarFill.classList.toggle('is-complete', !appState.is_running && pct >= 100);
+      }
+
+      function renderTable() {
+        const q = appState.searchQuery.trim().toLowerCase();
+        const filter = appState.filterType;
+        const isChapters = appState.viewMode === 'chapters';
+
+        if (isChapters) {
+          els.curriculumThead.innerHTML =
+            '<tr>' +
+              '<th>Tuần</th>' +
+              '<th>Chương &amp; Học liệu</th>' +
+              '<th>Trợ giảng</th>' +
+              '<th>Điểm</th>' +
+              '<th style="text-align:right;">Thao tác</th>' +
+            '</tr>';
+
+          const allChapters = groupRowsByChapter(appState.course_rows);
+          const filtered = allChapters.filter(ch => {
+            const matchesFilter = filter === 'all' || Boolean(ch.actions[filter]);
+            if (!matchesFilter) return false;
+            if (!q) return true;
+            const hay = (ch.week + ' ' + ch.title + ' ' + ch.items.map(i => i.title).join(' ')).toLowerCase();
+            return hay.includes(q);
+          });
+
+          els.tableSummaryText.textContent = 'Hiển thị ' + filtered.length + ' / ' + allChapters.length + ' chương học';
+          els.tableModeNote.textContent = 'Chế độ gom nhóm 1 dòng mỗi chương';
+
+          if (!filtered.length) {
+            els.curriculumTbody.innerHTML = '<tr><td colspan="5" class="table-empty">Không tìm thấy chương học phù hợp với bộ lọc hiện tại.</td></tr>';
+            return;
+          }
+
+          els.curriculumTbody.innerHTML = filtered.map(ch => {
+            const isFull = ch.avgPercent >= 100;
+            const barClass = isFull ? 'full' : (ch.avgPercent > 0 ? 'mid' : '');
+            const isRunningRow = appState.is_running && appState.task_detail && appState.task_detail.includes(ch.title);
+
+            const typesList = [];
+            if (ch.actions.slide) typesList.push('Slide');
+            if (ch.actions.ai) typesList.push('Bài tập AI');
+            if (ch.actions.manual) typesList.push('Bài tập');
+
+            const actionBtns = [];
+            if (ch.actions.slide && (filter === 'all' || filter === 'slide')) {
+              actionBtns.push(
+                '<button type="button" class="act-btn act-slide" data-action="specific" data-type="slide" data-title="' + escapeHtml(ch.actions.slide.target_title || ch.title) + '"' + (appState.is_running ? ' disabled' : '') + '>Slide</button>'
+              );
+            }
+            if (ch.actions.ai && (filter === 'all' || filter === 'ai')) {
+              actionBtns.push(
+                '<button type="button" class="act-btn act-ai" data-action="specific" data-type="ai" data-title="' + escapeHtml(ch.actions.ai.target_title || ch.title) + '"' + (appState.is_running ? ' disabled' : '') + '>Bài tập AI</button>'
+              );
+            }
+            if (ch.actions.manual && (filter === 'all' || filter === 'manual')) {
+              actionBtns.push(
+                '<button type="button" class="act-btn act-manual" data-action="specific" data-type="manual" data-title="' + escapeHtml(ch.actions.manual.target_title || ch.title) + '"' + (appState.is_running ? ' disabled' : '') + '>Bài tập</button>'
+              );
+            }
+
+            const scoreHtml = ch.bestScoreText && ch.bestScoreText !== '-'
+              ? '<span class="score-val tabular">' + escapeHtml(ch.bestScoreText) + '</span>'
+              : '<span class="score-empty">—</span>';
+
+            return (
+              '<tr class="' + (isRunningRow ? 'is-active-row' : '') + '">' +
+                '<td class="col-week tabular">' + escapeHtml(ch.week) + '</td>' +
+                '<td>' +
+                  '<div class="chapter-title-main">' + escapeHtml(ch.title) + '</div>' +
+                  '<div class="chapter-sub">' +
+                    '<span>' + escapeHtml(typesList.join(' · ')) + '</span>' +
+                    (isRunningRow ? '<span class="running-flag"><span class="status-dot running"></span>Đang xử lý</span>' : '') +
+                  '</div>' +
+                '</td>' +
+                '<td class="col-progress">' +
+                  '<div class="progress-inline">' +
+                    '<div class="mini-bar"><div class="mini-bar-fill ' + barClass + '" style="width:' + ch.avgPercent + '%"></div></div>' +
+                    '<span class="pct-text ' + (isFull ? 'full' : '') + ' tabular">' + escapeHtml(ch.percentStr) + '</span>' +
+                  '</div>' +
+                '</td>' +
+                '<td class="col-score">' + scoreHtml + '</td>' +
+                '<td class="col-actions"><div class="action-group">' + actionBtns.join('') + '</div></td>' +
+              '</tr>'
+            );
+          }).join('');
+        } else {
+          els.curriculumThead.innerHTML =
+            '<tr>' +
+              '<th>Tuần</th>' +
+              '<th>Mục học liệu</th>' +
+              '<th>Loại</th>' +
+              '<th>Trợ giảng</th>' +
+              '<th>Điểm</th>' +
+              '<th style="text-align:right;">Thao tác</th>' +
+            '</tr>';
+
+          const filteredRows = appState.course_rows.filter(row => {
+            if (filter !== 'all' && row.target_type !== filter) return false;
+            if (!q) return true;
+            const hay = ((row.week || '') + ' ' + (row.title || '') + ' ' + (row.type || '')).toLowerCase();
+            return hay.includes(q);
+          });
+
+          els.tableSummaryText.textContent = 'Hiển thị ' + filteredRows.length + ' / ' + appState.course_rows.length + ' mục học liệu';
+          els.tableModeNote.textContent = 'Chế độ chi tiết từng bài học';
+
+          if (!filteredRows.length) {
+            els.curriculumTbody.innerHTML = '<tr><td colspan="6" class="table-empty">Không có mục học liệu nào khớp với điều kiện lọc.</td></tr>';
+            return;
+          }
+
+          els.curriculumTbody.innerHTML = filteredRows.map(row => {
+            const pct = Number(row.percent_val || 0);
+            const isFull = pct >= 100;
+            const barClass = isFull ? 'full' : (pct > 0 ? 'mid' : '');
+            const tType = row.target_type || 'ai';
+            const typeLabel = tType === 'slide' ? 'Slide' : (tType === 'manual' ? 'Bài tập' : 'Bài tập AI');
+            const btnLabel = tType === 'slide' ? 'Chạy Slide' : (tType === 'manual' ? 'Giải bài' : 'Giải AI');
+            const btnCls = tType === 'slide' ? 'act-slide' : (tType === 'manual' ? 'act-manual' : 'act-ai');
+            const scoreHtml = row.highest_score && row.highest_score !== '-'
+              ? '<span class="score-val tabular">' + escapeHtml(row.highest_score) + '</span>'
+              : '<span class="score-empty">—</span>';
+
+            return (
+              '<tr>' +
+                '<td class="col-week tabular">' + escapeHtml(row.week || ('#' + row.stt)) + '</td>' +
+                '<td>' +
+                  '<div class="chapter-title-main">' + escapeHtml(row.title) + '</div>' +
+                  '<div class="chapter-sub"><span>' + escapeHtml(row.status || 'Sẵn sàng') + '</span></div>' +
+                '</td>' +
+                '<td><span class="type-tag ' + escapeHtml(tType) + '">' + escapeHtml(typeLabel) + '</span></td>' +
+                '<td class="col-progress">' +
+                  '<div class="progress-inline">' +
+                    '<div class="mini-bar"><div class="mini-bar-fill ' + barClass + '" style="width:' + pct + '%"></div></div>' +
+                    '<span class="pct-text ' + (isFull ? 'full' : '') + ' tabular">' + escapeHtml(row.percent_tg || (pct + '%')) + '</span>' +
+                  '</div>' +
+                '</td>' +
+                '<td class="col-score">' + scoreHtml + '</td>' +
+                '<td class="col-actions">' +
+                  '<div class="action-group">' +
+                    '<button type="button" class="act-btn ' + btnCls + '" data-action="specific" data-type="' + escapeHtml(tType) + '" data-title="' + escapeHtml(row.target_title || row.title) + '"' + (appState.is_running ? ' disabled' : '') + '>' + btnLabel + '</button>' +
+                  '</div>' +
+                '</td>' +
+              '</tr>'
+            );
+          }).join('');
+        }
+      }
+
+      function renderHistory() {
+        if (!appState.history || !appState.history.length) {
+          els.historyFeed.innerHTML = '<div class="table-empty">Chưa có lịch sử hoạt động nào được ghi nhận.</div>';
+          return;
+        }
+        els.historyFeed.innerHTML = appState.history.map(item => {
+          const tType = item.type || 'ai';
+          const typeText = tType === 'slide' ? 'Slide' : (tType === 'manual' ? 'Bài tập' : 'Bài tập AI');
+          return (
+            '<div class="history-item">' +
+              '<div class="history-top">' +
+                '<span class="type-tag ' + escapeHtml(tType) + '">' + escapeHtml(typeText) + '</span>' +
+                '<span class="history-time tabular">' + escapeHtml(item.time || '') + '</span>' +
+              '</div>' +
+              '<div class="history-title">' + escapeHtml(item.title || '') + '</div>' +
+              '<div class="history-bottom">' +
+                '<span>' + escapeHtml(item.detail || '') + ' · ' + escapeHtml(item.status || '') + '</span>' +
+                '<span class="history-score tabular">' + escapeHtml(item.score || '') + '</span>' +
+              '</div>' +
+            '</div>'
+          );
+        }).join('');
+      }
+
+      function renderAll() {
+        renderMasthead();
+        renderPipeline();
+        renderTable();
+        renderHistory();
+      }
+
+      /* Validation Helpers */
+      function validateRange(updateButton) {
+        const s = Number(els.inputStartQ.value);
+        const e = Number(els.inputEndQ.value);
+        const startInvalid = !Number.isInteger(s) || s < 1;
+        const endInvalid = !Number.isInteger(e) || e < 1;
+        const orderInvalid = !startInvalid && !endInvalid && s > e;
+        const invalid = startInvalid || endInvalid || orderInvalid;
+
+        els.boxStartQ.classList.toggle('is-invalid', startInvalid || orderInvalid);
+        els.boxEndQ.classList.toggle('is-invalid', endInvalid || orderInvalid);
+        els.rangeError.hidden = !invalid;
+        if (orderInvalid) {
+          els.rangeError.textContent = 'Từ câu phải nhỏ hơn hoặc bằng Đến câu.';
+        } else if (startInvalid || endInvalid) {
+          els.rangeError.textContent = 'Số câu bắt đầu và kết thúc phải từ 1 trở lên.';
+        }
+        if (updateButton) {
+          els.btnSolveRange.disabled = invalid || appState.is_running;
+        }
+        return !invalid;
+      }
+
+      function validateUrlField() {
+        const val = els.inputDirectUrl.value.trim();
+        els.btnClearUrl.hidden = val.length === 0;
+        if (!val) {
+          els.inputDirectUrl.classList.remove('is-invalid');
+          els.urlError.hidden = true;
+          return true;
+        }
+        const ok = /^https?:\/\/(edux\.cmcu\.edu\.vn|localhost|127\.0\.0\.1)/i.test(val);
+        els.inputDirectUrl.classList.toggle('is-invalid', !ok);
+        els.urlError.hidden = ok;
+        return ok;
+      }
+
+      /* Offline / Fallback Interactive Simulation */
+      function stopSimulation() {
+        if (appState.simTimer) {
+          clearInterval(appState.simTimer);
+          appState.simTimer = null;
+        }
+      }
+
+      function runOfflineSimulation(kind, label, meta) {
+        if (appState.is_running) {
+          showToast('Đang có tác vụ thực thi. Vui lòng dừng tác vụ hiện tại trước.', 'error');
+          return;
+        }
+        stopSimulation();
+
+        appState.is_running = true;
+        appState.current_task = label;
+        appState.task_detail = (meta && meta.title) ? meta.title : label;
+        appState.elapsed_sec = 0;
+        appState.progress_current = 0;
+        appState.progress_total = kind === 'slide' ? 35 : (meta && meta.total ? meta.total : 25);
+        appState.progress_percent = 5;
+        appState.active_stage = 1;
+        appState.step_label = kind === 'slide'
+          ? 'Đang mở Slide bài giảng trên Chrome 9222...'
+          : 'Đang quét cấu trúc câu hỏi từ DOM...';
+
+        if (kind === 'slide') {
+          appendLog('[SLIDE] Khởi chạy CMCU-Vạn-Năng V3.2 FIX · Tốc độ ' + els.slideSpeedSelect.value + 's (' + appState.task_detail + ')');
+        } else {
+          appendLog('[START] Bắt đầu tác vụ: ' + label + (meta && meta.title ? ' — ' + meta.title : ''));
+        }
+        renderAll();
+
+        const speedFactor = kind === 'slide' ? Math.max(0.4, Number(els.slideSpeedSelect.value) * 1.6) : 1;
+        let tick = 0;
+        const intervalMs = Math.round(520 * speedFactor);
+
+        appState.simTimer = setInterval(() => {
+          tick += 1;
+          appState.elapsed_sec += 1;
+
+          if (kind === 'slide') {
+            if (tick === 2) {
+              appState.active_stage = 2;
+              appState.progress_current = 12;
+              appState.progress_percent = 34;
+              appState.step_label = 'Đang chạy turbo lật trang Slide (12/35)...';
+              appendLog('[TURBO] Tự động đồng bộ tiến độ 12/35 trang Slide...');
+            } else if (tick === 4) {
+              appState.active_stage = 3;
+              appState.progress_current = 26;
+              appState.progress_percent = 74;
+              appState.step_label = 'Đang ghi nhận thời lượng Trợ giảng (26/35)...';
+              appendLog('[SLIDE] Đã vượt qua 26/35 trang · Trợ giảng đang cập nhật...');
+            } else if (tick === 6) {
+              appState.active_stage = 4;
+              appState.progress_current = 35;
+              appState.progress_percent = 100;
+              appState.step_label = 'Hoàn tất Slide bài giảng (35/35 trang)';
+              appendLog('[OK] Hoàn thành 100% Trợ giảng cho ' + appState.task_detail + '!');
+            } else if (tick >= 7) {
+              finishOfflineTask('slide', appState.task_detail, 'CMCU V3.2 FIX (35/35 trang)', '100% Trợ giảng', 'Hoàn thành');
+              return;
+            }
+          } else {
+            const total = appState.progress_total;
+            if (tick === 2) {
+              appState.active_stage = 2;
+              appState.progress_current = Math.round(total * 0.3);
+              appState.progress_percent = 32;
+              appState.step_label = 'AI Coding CLI (' + appState.ai_provider + ') đang suy luận đáp án...';
+              appendLog('[AI] Gửi ' + total + ' câu hỏi tới ' + appState.ai_provider.toUpperCase() + ' (' + appState.ai_model + ')...');
+            } else if (tick === 4) {
+              appState.active_stage = 3;
+              appState.progress_current = Math.round(total * 0.72);
+              appState.progress_percent = 72;
+              appState.step_label = 'Đang tích chọn đáp án DOM (' + appState.progress_current + '/' + total + ' câu)...';
+              appendLog('[OK] Đã tích chọn chính xác ' + appState.progress_current + '/' + total + ' câu lên biểu mẫu EDUX.');
+            } else if (tick === 6) {
+              appState.active_stage = 4;
+              appState.progress_current = total;
+              appState.progress_percent = 96;
+              appState.step_label = 'Rà soát câu bỏ sót & bấm nộp bài...';
+              appendLog('[RA SOÁT] Kiểm tra lại toàn bộ ' + total + ' câu và tiến hành nộp bài...');
+            } else if (tick >= 7) {
+              const scoreStr = '9.60/10';
+              finishOfflineTask(
+                meta && meta.target_type ? meta.target_type : 'ai',
+                appState.task_detail,
+                appState.subject_name + ' (' + total + '/' + total + ' câu)',
+                scoreStr,
+                'Đã nộp bài'
+              );
+              return;
+            }
+          }
+          renderAll();
+        }, intervalMs);
+      }
+
+      function finishOfflineTask(type, title, detail, score, status) {
+        stopSimulation();
+        appState.is_running = false;
+        appState.progress_percent = 100;
+        appState.active_stage = 4;
+        appState.step_label = 'Hoàn thành: ' + title;
+        if (type !== 'slide') {
+          appState.last_score = score;
+          appState.cache_count += 5;
+          appState.chapter_scores[title] = score;
+        }
+
+        appState.history.unshift({
+          id: Date.now(),
+          time: nowTimeStr(),
+          type: type,
+          title: title,
+          detail: detail,
+          score: score,
+          status: status
+        });
+
+        appState.course_rows.forEach(row => {
+          const matchesTitle = (row.target_title || row.title) === title || row.chapter === title;
+          if (matchesTitle && row.target_type === type) {
+            row.percent_val = 100;
+            row.percent_tg = '100%';
+            row.status = status;
+            if (type !== 'slide') {
+              row.highest_score = score;
+              row.highest_score_val = 9.6;
+            }
+          }
+        });
+
+        appendLog('[KẾT QUẢ] ' + title + ' — ' + score + ' (' + status + ')');
+        showToast('Đã hoàn thành: ' + title + ' (' + score + ')', 'success');
+        renderAll();
+      }
+
+      /* Backend API Bridge with Graceful Fallback */
+      async function apiFetch(url, options) {
+        const res = await fetch(url, options);
+        const text = await res.text();
+        let data = {};
+        try { data = text ? JSON.parse(text) : {}; } catch (_) {}
+        if (!res.ok) {
+          throw new Error(data.error || ('HTTP ' + res.status));
+        }
+        return data;
+      }
+
+      async function pollStatus() {
+        if (appState.offlineMode) return;
+        try {
+          const data = await apiFetch('/api/status');
+          Object.assign(appState, {
+            chrome_connected: Boolean(data.chrome_connected),
+            subject_name: data.subject_name || appState.subject_name,
+            is_running: Boolean(data.is_running),
+            current_task: data.current_task || '',
+            task_detail: data.task_detail || '',
+            cache_count: Number(data.cache_count || 0),
+            progress_current: Number(data.progress_current || 0),
+            progress_total: Number(data.progress_total || 0),
+            progress_percent: Number(data.progress_percent || 0),
+            step_label: data.step_label || 'Sẵn sàng nhận lệnh',
+            active_stage: Number(data.active_stage || 0),
+            elapsed_sec: Number(data.elapsed_sec || 0),
+            ai_provider: data.ai_provider || appState.ai_provider,
+            ai_model: data.ai_model || appState.ai_model,
+            available_tools: Array.isArray(data.available_tools) ? data.available_tools : appState.available_tools,
+            last_score: data.last_score || appState.last_score,
+            history: Array.isArray(data.history) && data.history.length ? data.history : appState.history,
+            chapter_scores: data.chapter_scores || appState.chapter_scores
+          });
+          renderAll();
+        } catch (_) {
+          appState.offlineMode = true;
+          els.sseDot.className = 'status-dot connected';
+          els.sseStatusLabel.textContent = 'Nhật ký SSE (Chế độ Demo)';
+          renderAll();
+        }
+      }
+
+      function initSSE() {
+        if (appState.offlineMode || typeof EventSource === 'undefined') {
+          els.sseStatusLabel.textContent = 'Nhật ký SSE (Chế độ Demo)';
+          return;
+        }
+        try {
+          const es = new EventSource('/api/logs');
+          appState.sse = es;
+          es.onopen = () => {
+            els.sseDot.className = 'status-dot connected';
+            els.sseStatusLabel.textContent = 'Luồng nhật ký SSE · Trực tuyến';
+          };
+          es.onmessage = evt => {
+            if (evt.data) appendLog(evt.data);
+          };
+          es.onerror = () => {
+            els.sseDot.className = 'status-dot disconnected';
+            els.sseStatusLabel.textContent = 'SSE gián đoạn · Chuyển Demo';
+            es.close();
+          };
+        } catch (_) {
+          els.sseStatusLabel.textContent = 'Nhật ký SSE (Chế độ Demo)';
+        }
+      }
+
+      async function dispatchAction(endpoint, payload, simKind, simLabel, simMeta) {
+        if (appState.offlineMode) {
+          runOfflineSimulation(simKind, simLabel, simMeta);
+          return;
+        }
+        try {
+          await apiFetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload || {})
+          });
+          showToast('Đã gửi lệnh: ' + simLabel);
+          pollStatus();
+        } catch (err) {
+          if (err.message && err.message.includes('HTTP')) {
+            showToast(err.message, 'error');
+          } else {
+            appState.offlineMode = true;
+            runOfflineSimulation(simKind, simLabel, simMeta);
+          }
+        }
+      }
+
+      async function handleScanCourse() {
+        if (appState.offlineMode) {
+          appendLog('[SCAN] Đang quét lại toàn bộ cấu trúc môn ' + appState.subject_name + '...');
+          setTimeout(() => {
+            appendLog('[OK] Đã đồng bộ ' + appState.course_rows.length + ' mục học liệu qua 8 tuần học.');
+            showToast('Đã quét lại môn học thành công.', 'success');
+            renderAll();
+          }, 360);
+          return;
+        }
+        try {
+          els.btnScanCourse.disabled = true;
+          const rows = await apiFetch('/api/action/scan_course', { method: 'POST', body: '{}' });
+          if (Array.isArray(rows) && rows.length) {
+            appState.course_rows = rows;
+          }
+          showToast('Đã cập nhật cấu trúc môn học.', 'success');
+          renderAll();
+        } catch (_) {
+          appState.offlineMode = true;
+          handleScanCourse();
+        } finally {
+          els.btnScanCourse.disabled = appState.is_running;
+        }
+      }
+
+      async function handleStopTask() {
+        if (appState.offlineMode) {
+          stopSimulation();
+          appState.is_running = false;
+          appState.step_label = 'Đã dừng tác vụ theo yêu cầu';
+          appendLog('[STOP] Đã gửi lệnh dừng tác vụ! Hệ thống đã dừng an toàn.');
+          showToast('Đã dừng tác vụ đang chạy.');
+          renderAll();
+          return;
+        }
+        try {
+          await apiFetch('/api/action/stop', { method: 'POST', body: '{}' });
+          showToast('Đã gửi yêu cầu dừng tác vụ.');
+        } catch (err) {
+          showToast(err.message || 'Không thể dừng tác vụ', 'error');
+        }
+      }
+
+      /* Modals Management */
+      function openModal(modalEl, triggerEl) {
+        appState.lastTriggerEl = triggerEl || document.activeElement;
+        modalEl.hidden = false;
+        const closeBtn = modalEl.querySelector('.sheet-close');
+        if (closeBtn) closeBtn.focus();
+      }
+
+      function closeModal(modalEl) {
+        modalEl.hidden = true;
+        if (appState.lastTriggerEl && typeof appState.lastTriggerEl.focus === 'function') {
+          appState.lastTriggerEl.focus();
+        }
+      }
+
+      function populateSettingsModal() {
+        els.detectedToolsList.innerHTML = ALL_PROVIDERS.map(tool => {
+          const ok = appState.available_tools.includes(tool);
+          return '<span class="tool-chip ' + (ok ? 'available' : '') + '">' + escapeHtml(tool) + ' · ' + (ok ? 'Sẵn sàng' : 'Chưa cài') + '</span>';
+        }).join('');
+
+        const providerInput = document.querySelector('input[name="aiProvider"][value="' + appState.ai_provider + '"]');
+        if (providerInput) providerInput.checked = true;
+
+        if (Array.from(els.selectAiModel.options).some(o => o.value === appState.ai_model)) {
+          els.selectAiModel.value = appState.ai_model;
+        }
+
+        const effortInput = document.querySelector('input[name="aiEffort"][value="' + appState.ai_effort + '"]');
+        if (effortInput) effortInput.checked = true;
+      }
+
+      async function saveSettings() {
+        const provider = (document.querySelector('input[name="aiProvider"]:checked') || {}).value || 'auto';
+        const model = els.selectAiModel.value;
+        const effort = (document.querySelector('input[name="aiEffort"]:checked') || {}).value || 'low';
+
+        if (!appState.offlineMode) {
+          try {
+            await apiFetch('/api/config', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ provider, model, effort })
+            });
+          } catch (_) {
+            appState.offlineMode = true;
+          }
+        }
+
+        appState.ai_provider = provider;
+        appState.ai_model = model;
+        appState.ai_effort = effort;
+        appendLog('[CONFIG] Đã lưu cấu hình AI CLI: ' + provider.toUpperCase() + ' (' + model + ', effort: ' + effort + ')');
+        closeModal(els.modalSettings);
+        renderMasthead();
+        showToast('Đã lưu cấu hình AI Coding CLI.', 'success');
+      }
+
+      function openCacheModal() {
+        els.modalCacheCount.textContent = String(appState.cache_count || 0);
+        els.confirmCacheNum.textContent = String(appState.cache_count || 0);
+        els.cacheConfirmBox.hidden = true;
+        els.btnRequestClearCache.disabled = (appState.cache_count || 0) === 0;
+        openModal(els.modalCache, els.btnOpenCache);
+      }
+
+      async function clearCacheConfirmed() {
+        if (!appState.offlineMode) {
+          try {
+            await apiFetch('/api/cache', { method: 'DELETE' });
+          } catch (_) {
+            appState.offlineMode = true;
+          }
+        }
+        appState.cache_count = 0;
+        els.modalCacheCount.textContent = '0';
+        els.cacheConfirmBox.hidden = true;
+        appendLog('[CACHE] Đã xóa sạch toàn bộ ngân hàng câu hỏi Cache cục bộ.');
+        closeModal(els.modalCache);
+        renderMasthead();
+        showToast('Đã xóa toàn bộ bộ nhớ đệm Cache.', 'success');
+      }
+
+      /* Bind Events */
+      function bindEvents() {
+        els.btnSolveCurrent.addEventListener('click', () => {
+          dispatchAction('/api/action/solve_current', {}, 'ai', 'Giải bài đang mở', {
+            title: 'Bài tập đang mở trên Chrome',
+            target_type: 'ai',
+            total: 25
+          });
+        });
+
+        els.btnRunSlide.addEventListener('click', () => {
+          const speed = Number(els.slideSpeedSelect.value || 0.25);
+          dispatchAction('/api/action/slide', { speed }, 'slide', 'Chạy Slide', {
+            title: 'Slide bài giảng đang mở',
+            target_type: 'slide'
+          });
+        });
+
+        els.btnScanCourse.addEventListener('click', handleScanCourse);
+        els.btnStopTask.addEventListener('click', handleStopTask);
+
+        /* View Mode & Filter Segmented Controls */
+        document.querySelectorAll('input[name="viewMode"]').forEach(radio => {
+          radio.addEventListener('change', e => {
+            appState.viewMode = e.target.value;
+            renderTable();
+          });
+        });
+
+        document.querySelectorAll('input[name="filterType"]').forEach(radio => {
+          radio.addEventListener('change', e => {
+            appState.filterType = e.target.value;
+            renderTable();
+          });
+        });
+
+        /* Search Field + Clear */
+        els.searchInput.addEventListener('input', e => {
+          appState.searchQuery = e.target.value;
+          els.btnClearSearch.hidden = appState.searchQuery.length === 0;
+          renderTable();
+        });
+        els.searchInput.addEventListener('keydown', e => {
+          if (e.key === 'Escape' && els.searchInput.value) {
+            els.searchInput.value = '';
+            appState.searchQuery = '';
+            els.btnClearSearch.hidden = true;
+            renderTable();
+          }
+        });
+        els.btnClearSearch.addEventListener('click', () => {
+          els.searchInput.value = '';
+          appState.searchQuery = '';
+          els.btnClearSearch.hidden = true;
+          els.searchInput.focus();
+          renderTable();
+        });
+
+        /* Curriculum Row Actions (Delegated) */
+        els.curriculumTbody.addEventListener('click', e => {
+          const btn = e.target.closest('button[data-action="specific"]');
+          if (!btn) return;
+          const title = btn.getAttribute('data-title') || '';
+          const targetType = btn.getAttribute('data-type') || 'ai';
+          const label = targetType === 'slide' ? 'Chạy Slide' : (targetType === 'manual' ? 'Giải bài' : 'Giải AI');
+          dispatchAction('/api/action/solve_specific', { title, target_type: targetType }, targetType, label, {
+            title,
+            target_type: targetType,
+            total: 30
+          });
+        });
+
+        /* Range Steppers & Validation */
+        function adjustStepper(inputEl, delta) {
+          const cur = parseInt(inputEl.value, 10) || 1;
+          inputEl.value = String(Math.max(1, cur + delta));
+          validateRange(true);
+        }
+        els.btnStartDec.addEventListener('click', () => adjustStepper(els.inputStartQ, -1));
+        els.btnStartInc.addEventListener('click', () => adjustStepper(els.inputStartQ, 1));
+        els.btnEndDec.addEventListener('click', () => adjustStepper(els.inputEndQ, -1));
+        els.btnEndInc.addEventListener('click', () => adjustStepper(els.inputEndQ, 1));
+        els.inputStartQ.addEventListener('input', () => validateRange(true));
+        els.inputEndQ.addEventListener('input', () => validateRange(true));
+
+        els.btnSolveRange.addEventListener('click', () => {
+          if (!validateRange(true)) return;
+          const start_q = parseInt(els.inputStartQ.value, 10);
+          const end_q = parseInt(els.inputEndQ.value, 10);
+          dispatchAction('/api/action/solve_range', { start_q, end_q }, 'ai', 'Giải theo khoảng câu', {
+            title: 'Khoảng câu ' + start_q + '–' + end_q,
+            target_type: 'ai',
+            total: Math.max(1, end_q - start_q + 1)
+          });
+        });
+
+        /* Direct URL Field */
+        els.inputDirectUrl.addEventListener('input', validateUrlField);
+        els.btnClearUrl.addEventListener('click', () => {
+          els.inputDirectUrl.value = '';
+          validateUrlField();
+          els.inputDirectUrl.focus();
+        });
+        els.btnSolveUrl.addEventListener('click', () => {
+          const url = els.inputDirectUrl.value.trim();
+          if (!url || !validateUrlField()) {
+            els.inputDirectUrl.classList.add('is-invalid');
+            els.urlError.hidden = false;
+            els.inputDirectUrl.focus();
+            return;
+          }
+          dispatchAction('/api/action/solve_url', { url }, 'ai', 'Giải theo URL', {
+            title: 'Liên kết bài tập trực tiếp',
+            target_type: 'ai',
+            total: 20
+          });
+        });
+
+        /* Inspector Tabs (Terminal SSE | Lịch sử điểm) */
+        document.querySelectorAll('input[name="inspectorTab"]').forEach(radio => {
+          radio.addEventListener('change', e => {
+            appState.inspectorTab = e.target.value;
+            const showTerminal = appState.inspectorTab === 'terminal';
+            els.paneTerminal.hidden = !showTerminal;
+            els.paneHistory.hidden = showTerminal;
+            $('tab-terminal').nextElementSibling.setAttribute('aria-selected', String(showTerminal));
+            $('tab-history').nextElementSibling.setAttribute('aria-selected', String(!showTerminal));
+          });
+        });
+
+        /* Apple Switch for Auto-scroll */
+        els.switchAutoscroll.addEventListener('click', () => {
+          appState.autoScroll = !appState.autoScroll;
+          els.switchAutoscroll.setAttribute('aria-checked', String(appState.autoScroll));
+          if (appState.autoScroll) {
+            els.terminalLog.scrollTop = els.terminalLog.scrollHeight;
+          }
+        });
+
+        els.btnClearLogs.addEventListener('click', () => {
+          appState.logs = [];
+          renderLogs();
+        });
+
+        /* Modals */
+        els.btnOpenSettings.addEventListener('click', () => {
+          populateSettingsModal();
+          openModal(els.modalSettings, els.btnOpenSettings);
+        });
+        els.btnCloseSettings.addEventListener('click', () => closeModal(els.modalSettings));
+        els.btnCancelSettings.addEventListener('click', () => closeModal(els.modalSettings));
+        els.btnSaveSettings.addEventListener('click', saveSettings);
+
+        els.btnOpenCache.addEventListener('click', openCacheModal);
+        els.btnCloseCache.addEventListener('click', () => closeModal(els.modalCache));
+        els.btnCloseCacheFooter.addEventListener('click', () => closeModal(els.modalCache));
+        els.btnRequestClearCache.addEventListener('click', () => {
+          els.cacheConfirmBox.hidden = false;
+        });
+        els.btnCacheCancelConfirm.addEventListener('click', () => {
+          els.cacheConfirmBox.hidden = true;
+        });
+        els.btnCacheConfirmDelete.addEventListener('click', clearCacheConfirmed);
+
+        [els.modalSettings, els.modalCache].forEach(modal => {
+          modal.addEventListener('click', e => {
+            if (e.target === modal) closeModal(modal);
+          });
+        });
+
+        document.addEventListener('keydown', e => {
+          if (e.key === 'Escape') {
+            if (!els.modalSettings.hidden) closeModal(els.modalSettings);
+            if (!els.modalCache.hidden) closeModal(els.modalCache);
+          }
+        });
+      }
+
+      /* Initialize */
+      bindEvents();
+      validateRange(true);
+      validateUrlField();
+      renderLogs();
+      renderAll();
+
+      if (!appState.offlineMode) {
+        pollStatus();
+        initSSE();
+        appState.pollTimer = setInterval(pollStatus, 1500);
+      } else {
+        els.sseStatusLabel.textContent = 'Nhật ký SSE (Chế độ Demo)';
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EDUX ULTIMATE LIFEFORM v3.0 — CMCU LMS Control Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-window: #FFFFFF;
+      --bg-sidebar: rgba(242, 242, 247, 0.88);
+      --bg-toolbar: rgba(255, 255, 255, 0.88);
+      --bg-elevated: #F8F9FB;
+      --border-hairline: rgba(60, 60, 67, 0.12);
+      --border-soft: rgba(60, 60, 67, 0.08);
+      --border-strong: rgba(60, 60, 67, 0.20);
+      --text-primary: #1D1D1F;
+      --text-secondary: #5E5E63;
+      --accent: #007AFF;
+      --accent-btn: #0066D6;
+      --accent-btn-hover: #0055B3;
+      --accent-tint: rgba(0, 122, 255, 0.10);
+      --accent-text: #0058B8;
+      --green: #1F9D38;
+      --green-text: #137328;
+      --green-tint: rgba(31, 157, 56, 0.11);
+      --orange: #C96B00;
+      --orange-text: #944E00;
+      --orange-tint: rgba(201, 107, 0, 0.11);
+      --purple: #7C3AED;
+      --purple-text: #5E22C9;
+      --purple-tint: rgba(124, 58, 237, 0.10);
+      --red: #D92D20;
+      --red-text: #B42318;
+      --red-tint: rgba(217, 45, 32, 0.10);
+      --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-sheet: 0 24px 60px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(60, 60, 67, 0.12);
+      --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "IBM Plex Sans", sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      --sidebar-width: 256px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: var(--bg-window);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, select { font-family: inherit; color: inherit; }
+    .tabular { font-variant-numeric: tabular-nums; }
+    .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    /* macOS NavigationSplitView Shell */
+    .app-shell { display: flex; height: 100vh; width: 100%; overflow: hidden; background: var(--bg-window); }
+
+    /* Translucent Cool Stone Sidebar (Vibrancy ONLY on navigation/toolbar/sheet layers) */
+    .sidebar {
+      width: var(--sidebar-width);
+      flex-shrink: 0;
+      background: var(--bg-sidebar);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-right: 1px solid var(--border-hairline);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 16px 12px 20px;
+      gap: 17px;
+      z-index: 30;
+    }
+
+    .sidebar::-webkit-scrollbar, .curriculum-scroll::-webkit-scrollbar, .drawer-content::-webkit-scrollbar { width: 6px; height: 6px; }
+    .sidebar::-webkit-scrollbar-thumb, .curriculum-scroll::-webkit-scrollbar-thumb, .drawer-content::-webkit-scrollbar-thumb {
+      background: rgba(60, 60, 67, 0.18);
+      border-radius: 99px;
+    }
+
+    .sidebar-brand { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 2px 4px; }
+    .brand-lockup { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .brand-mark {
+      width: 30px; height: 30px; border-radius: 8px; background: var(--accent-btn); color: #FFFFFF;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: var(--shadow-xs);
+    }
+    .brand-text { min-width: 0; }
+    .brand-title { font-size: 13.5px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .brand-subtitle { font-size: 12px; color: var(--text-secondary); line-height: 1.25; margin-top: 1px; }
+    .sidebar-close-btn {
+      display: none; width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--border-hairline);
+      background: #FFFFFF; align-items: center; justify-content: center; cursor: pointer; color: var(--text-secondary);
+    }
+
+    .sidebar-section { display: flex; flex-direction: column; gap: 6px; }
+    .sidebar-section-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); padding: 0 8px; letter-spacing: 0.01em; }
+    .nav-list { display: flex; flex-direction: column; gap: 2px; }
+    .nav-item {
+      width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 7px 9px; border: none; background: transparent; border-radius: 8px;
+      cursor: pointer; font-size: 13.5px; font-weight: 500; text-align: left; transition: background-color 0.12s ease;
+    }
+    .nav-item:hover { background: rgba(60, 60, 67, 0.06); }
+    .nav-item.active { background: rgba(0, 122, 255, 0.12); color: var(--accent-text); font-weight: 600; }
+    .nav-item-left { display: flex; align-items: center; gap: 9px; min-width: 0; }
+    .nav-icon { width: 16px; height: 16px; color: var(--text-secondary); flex-shrink: 0; }
+    .nav-item.active .nav-icon { color: var(--accent-btn); }
+    .nav-count {
+      font-size: 12px; font-weight: 600; color: var(--text-secondary); font-variant-numeric: tabular-nums;
+      padding: 1px 6px; border-radius: 99px; background: rgba(60, 60, 67, 0.07);
+    }
+    .nav-item.active .nav-count { color: var(--accent-text); background: rgba(0, 122, 255, 0.14); }
+
+    /* System Status List */
+    .inset-list {
+      background: rgba(255, 255, 255, 0.80); border: 1px solid var(--border-hairline);
+      border-radius: 11px; overflow: hidden; box-shadow: var(--shadow-xs);
+    }
+    .status-row {
+      width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 9px 10px; background: transparent; border: none; border-bottom: 1px solid var(--border-soft);
+      font-size: 13px; text-align: left;
+    }
+    .status-row:last-child { border-bottom: none; }
+    button.status-row { cursor: pointer; transition: background-color 0.12s ease; }
+    button.status-row:hover { background: var(--bg-elevated); }
+    .status-row-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+    .status-dot.offline { background: var(--red); }
+    .status-row-title { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .status-row-sub {
+      font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden;
+      text-overflow: ellipsis; max-width: 148px; display: block;
+    }
+    .status-row-right { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 500; color: var(--text-secondary); flex-shrink: 0; }
+    .status-value-ok { color: var(--green-text); font-weight: 600; }
+    .status-value-bad { color: var(--red-text); font-weight: 600; }
+
+    /* Quick Operations Grouped Cards */
+    .quick-card {
+      background: rgba(255, 255, 255, 0.88); border: 1px solid var(--border-hairline);
+      border-radius: 11px; padding: 11px 10px; display: flex; flex-direction: column; gap: 9px; box-shadow: var(--shadow-xs);
+    }
+    .quick-card-title { font-size: 12.5px; font-weight: 600; color: var(--text-primary); }
+    .stepper-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .field-label { font-size: 12.5px; font-weight: 500; color: var(--text-secondary); flex-shrink: 0; }
+    .stepper-group {
+      display: inline-flex; align-items: center; border: 1px solid var(--border-strong);
+      border-radius: 7px; background: #FFFFFF; overflow: hidden; height: 28px;
+    }
+    .stepper-btn {
+      width: 26px; height: 100%; border: none; background: var(--bg-elevated); color: var(--text-primary);
+      font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .stepper-btn:hover { background: #EAECEF; }
+    .stepper-input {
+      width: 44px; height: 100%; border: none; border-left: 1px solid var(--border-soft); border-right: 1px solid var(--border-soft);
+      background: #FFFFFF; text-align: center; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums;
+      outline: none; -moz-appearance: textfield;
+    }
+    .stepper-input::-webkit-inner-spin-button, .stepper-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+    .url-field-wrap { position: relative; display: flex; align-items: center; }
+    .text-input {
+      width: 100%; height: 30px; padding: 0 28px 0 9px; font-size: 12.5px; border: 1px solid var(--border-strong);
+      border-radius: 7px; background: #FFFFFF; transition: border-color 0.12s ease, box-shadow 0.12s ease;
+    }
+    .text-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.14); }
+    .clear-btn {
+      position: absolute; right: 5px; width: 18px; height: 18px; border-radius: 50%; border: none;
+      background: rgba(60, 60, 67, 0.16); color: var(--text-primary); display: none; align-items: center;
+      justify-content: center; cursor: pointer; padding: 0;
+    }
+    .clear-btn.visible { display: flex; }
+    .clear-btn:hover { background: rgba(60, 60, 67, 0.28); }
+    .inline-msg { font-size: 12px; line-height: 1.35; color: var(--red-text); display: none; }
+    .inline-msg.visible { display: block; }
+    .inline-msg.hint { color: var(--text-secondary); }
+
+    /* Buttons */
+    .btn {
+      height: 30px; padding: 0 12px; border-radius: 7px; font-size: 13px; font-weight: 500;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;
+      border: 1px solid transparent; transition: background-color 0.12s ease, opacity 0.12s ease; white-space: nowrap;
+    }
+    .btn:disabled { opacity: 0.48; cursor: not-allowed; }
+    .btn-primary { background: var(--accent-btn); color: #FFFFFF; box-shadow: var(--shadow-xs); }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-btn-hover); }
+    .btn-secondary { background: #FFFFFF; color: var(--text-primary); border-color: var(--border-strong); box-shadow: var(--shadow-xs); }
+    .btn-secondary:hover:not(:disabled) { background: var(--bg-elevated); }
+    .btn-tinted { background: var(--accent-tint); color: var(--accent-text); border-color: rgba(0, 122, 255, 0.18); }
+    .btn-tinted:hover:not(:disabled) { background: rgba(0, 122, 255, 0.16); }
+    .btn-danger { background: var(--red); color: #FFFFFF; box-shadow: var(--shadow-xs); }
+    .btn-danger:hover:not(:disabled) { background: #B92318; }
+    .btn-full { width: 100%; }
+
+    /* Main Workspace Area */
+    .main-area { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--bg-window); overflow: hidden; }
+
+    /* Unified Top macOS Toolbar */
+    .toolbar {
+      position: sticky; top: 0; z-index: 20; min-height: 58px; padding: 10px 20px;
+      background: var(--bg-toolbar); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid var(--border-hairline); display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; flex-wrap: wrap;
+    }
+    .toolbar-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .mobile-menu-btn {
+      display: none; width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--border-strong);
+      background: #FFFFFF; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+    }
+    .window-title-group { min-width: 0; }
+    .window-title { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -0.015em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .window-subtitle { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+    .toolbar-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+    /* Pure-Text Apple HIG Segmented Control */
+    .segmented-control { display: inline-flex; align-items: center; background: rgba(118, 118, 128, 0.12); padding: 2px; border-radius: 8px; gap: 2px; }
+    .segment-btn {
+      height: 26px; padding: 0 12px; border: none; background: transparent; border-radius: 6px;
+      font-size: 12.5px; font-weight: 500; color: var(--text-secondary); cursor: pointer; white-space: nowrap;
+      transition: background-color 0.14s ease, color 0.14s ease;
+    }
+    .segment-btn:hover { color: var(--text-primary); }
+    .segment-btn.active {
+      background: #FFFFFF; color: var(--text-primary); font-weight: 600;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.10), 0 0 0 0.5px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Apple Search Field */
+    .search-field { position: relative; width: 204px; display: flex; align-items: center; }
+    .search-icon { position: absolute; left: 9px; width: 14px; height: 14px; color: var(--text-secondary); pointer-events: none; }
+    .search-input {
+      width: 100%; height: 30px; padding: 0 28px 0 28px; border-radius: 8px; border: 1px solid var(--border-strong);
+      background: rgba(242, 242, 247, 0.65); font-size: 13px;
+    }
+    .search-input:focus { outline: none; background: #FFFFFF; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.14); }
+    .search-input::-webkit-search-cancel-button { -webkit-appearance: none; }
+
+    /* Apple Pop-up Picker */
+    .picker-wrap { position: relative; display: inline-flex; align-items: center; }
+    .picker-select {
+      appearance: none; -webkit-appearance: none; height: 30px; padding: 0 26px 0 10px; border-radius: 7px;
+      border: 1px solid var(--border-strong); background: #FFFFFF; font-size: 12.5px; font-weight: 500; cursor: pointer;
+      box-shadow: var(--shadow-xs);
+    }
+    .picker-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.14); }
+    .picker-chevrons { position: absolute; right: 8px; width: 12px; height: 12px; color: var(--text-secondary); pointer-events: none; }
+    .toolbar-actions { display: flex; align-items: center; gap: 8px; }
+
+    /* Active Execution Status Strip */
+    .status-strip {
+      background: var(--bg-elevated); border-bottom: 1px solid var(--border-hairline);
+      padding: 10px 20px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;
+    }
+    .status-strip-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+    .mission-info { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+    .task-badge {
+      display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 99px;
+      font-size: 12px; font-weight: 600; background: rgba(60, 60, 67, 0.08); color: var(--text-secondary); flex-shrink: 0;
+    }
+    .task-badge.running { background: var(--accent-tint); color: var(--accent-text); }
+    .task-badge.success { background: var(--green-tint); color: var(--green-text); }
+    .pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .task-badge.running .pulse-dot { animation: pulse-fade 1.4s ease-in-out infinite; }
+    @keyframes pulse-fade { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.82); } }
+
+    .mission-detail { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mission-score-pill {
+      font-size: 12px; font-weight: 600; color: var(--green-text); background: var(--green-tint);
+      padding: 2px 8px; border-radius: 99px; flex-shrink: 0;
+    }
+    .mission-metrics { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .progress-cluster { display: flex; align-items: center; gap: 8px; }
+    .progress-track { width: 144px; height: 5px; border-radius: 99px; background: rgba(60, 60, 67, 0.14); overflow: hidden; }
+    .progress-fill { height: 100%; width: 0%; border-radius: 99px; background: var(--accent); transition: width 0.25s ease; }
+    .progress-text { font-size: 12.5px; font-weight: 600; min-width: 74px; text-align: right; }
+    .timer-pill { font-size: 12.5px; font-weight: 500; color: var(--text-secondary); padding: 2px 8px; border-radius: 6px; background: #FFFFFF; border: 1px solid var(--border-hairline); }
+
+    .pipeline-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .pipeline-chips { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .stage-chip {
+      display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 6px;
+      font-size: 12px; font-weight: 500; color: var(--text-secondary); background: #FFFFFF; border: 1px solid var(--border-hairline);
+    }
+    .stage-chip.active { color: var(--accent-text); background: var(--accent-tint); border-color: rgba(0, 122, 255, 0.28); font-weight: 600; }
+    .stage-chip.done { color: var(--green-text); background: var(--green-tint); border-color: rgba(31, 157, 56, 0.22); font-weight: 600; }
+    .stage-check { display: none; width: 12px; height: 12px; }
+    .stage-chip.done .stage-check { display: inline-block; }
+    .step-caption { font-size: 12px; color: var(--text-secondary); }
+
+    /* Curriculum Table (Crisp Paper, ZERO backdrop-filter on content rows) */
+    .curriculum-scroll { flex: 1; overflow-y: auto; overflow-x: auto; background: var(--bg-window); padding: 4px 20px 16px; }
+    .curriculum-table { width: 100%; border-collapse: collapse; min-width: 650px; }
+    .curriculum-table thead th {
+      position: sticky; top: 0; z-index: 5; background: #FFFFFF; padding: 11px 10px 9px;
+      font-size: 12px; font-weight: 600; color: var(--text-secondary); text-align: left;
+      border-bottom: 1px solid var(--border-hairline); white-space: nowrap;
+    }
+    .curriculum-table thead th.align-right, .curriculum-table tbody td.align-right { text-align: right; }
+    .curriculum-row { border-bottom: 1px solid var(--border-soft); transition: background-color 0.1s ease; }
+    .curriculum-row:hover { background: var(--bg-elevated); }
+    .curriculum-row td { padding: 11px 10px; vertical-align: middle; }
+    .week-badge { font-size: 13px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
+    .chapter-title-main { font-size: 14px; font-weight: 600; color: var(--text-primary); line-height: 1.35; }
+    .chapter-meta-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+    /* Circular SVG Completion Ring (Things 3 Style) */
+    .progress-ring-cell { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .ring-wrap { position: relative; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .ring-svg { width: 22px; height: 22px; transform: rotate(-90deg); }
+    .ring-track { fill: none; stroke: rgba(60, 60, 67, 0.14); stroke-width: 2.4; }
+    .ring-fill { fill: none; stroke: var(--accent); stroke-width: 2.4; stroke-linecap: round; transition: stroke-dashoffset 0.3s ease; }
+    .ring-fill.complete { stroke: var(--green); }
+    .ring-check { position: absolute; width: 10px; height: 10px; color: var(--green-text); }
+    .pct-label { font-size: 13px; font-weight: 600; min-width: 36px; }
+    .pct-label.zero { color: var(--text-secondary); font-weight: 500; }
+    .pct-label.complete { color: var(--green-text); }
+
+    .score-pill {
+      display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 99px;
+      font-size: 12.5px; font-weight: 600; background: var(--green-tint); color: var(--green-text); white-space: nowrap;
+    }
+    .score-empty { font-size: 13px; color: var(--text-secondary); }
+    .type-pill { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+    .type-pill.ai { background: var(--purple-tint); color: var(--purple-text); }
+    .type-pill.slide { background: var(--accent-tint); color: var(--accent-text); }
+    .type-pill.manual { background: var(--orange-tint); color: var(--orange-text); }
+
+    .row-actions { display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px; flex-wrap: wrap; }
+    .act-btn {
+      height: 28px; padding: 0 10px; border-radius: 7px; font-size: 12.5px; font-weight: 500;
+      display: inline-flex; align-items: center; gap: 5px; cursor: pointer;
+      border: 1px solid var(--border-strong); background: #FFFFFF; transition: background-color 0.12s ease; white-space: nowrap;
+    }
+    .act-btn.slide { color: var(--accent-text); background: var(--accent-tint); border-color: rgba(0, 122, 255, 0.22); }
+    .act-btn.slide:hover:not(:disabled) { background: rgba(0, 122, 255, 0.16); }
+    .act-btn.ai { color: var(--purple-text); background: var(--purple-tint); border-color: rgba(124, 58, 237, 0.22); }
+    .act-btn.ai:hover:not(:disabled) { background: rgba(124, 58, 237, 0.16); }
+    .act-btn.manual { color: var(--orange-text); background: var(--orange-tint); border-color: rgba(201, 107, 0, 0.24); }
+    .act-btn.manual:hover:not(:disabled) { background: rgba(201, 107, 0, 0.17); }
+    .act-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .empty-state { text-align: center; padding: 42px 20px; color: var(--text-secondary); }
+    .empty-state-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+
+    /* Bottom Tabbed Drawer (macOS TabView inside window body) */
+    .bottom-drawer {
+      height: 236px; border-top: 1px solid var(--border-hairline); background: var(--bg-elevated);
+      display: flex; flex-direction: column; flex-shrink: 0; transition: height 0.18s ease;
+    }
+    .bottom-drawer.expanded { height: 350px; }
+    .bottom-drawer.collapsed { height: 44px; }
+    .drawer-header {
+      height: 44px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      border-bottom: 1px solid var(--border-soft); background: #FFFFFF; flex-shrink: 0;
+    }
+    .drawer-header-left, .drawer-header-right { display: flex; align-items: center; gap: 12px; }
+
+    /* Apple HIG Switch inside Pane Body (NOT toolbar) */
+    .switch-control { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 500; cursor: pointer; }
+    .apple-switch {
+      position: relative; width: 36px; height: 20px; border-radius: 99px; border: none; padding: 2px;
+      background: rgba(120, 120, 128, 0.30); cursor: pointer; transition: background-color 0.18s ease;
+      display: inline-flex; align-items: center;
+    }
+    .apple-switch[aria-checked="true"] { background: var(--green); }
+    .apple-switch-knob {
+      width: 16px; height: 16px; border-radius: 50%; background: #FFFFFF;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.24); transform: translateX(0); transition: transform 0.18s ease;
+    }
+    .apple-switch[aria-checked="true"] .apple-switch-knob { transform: translateX(16px); }
+
+    .drawer-body { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+    .bottom-drawer.collapsed .drawer-body { display: none; }
+    .drawer-content { flex: 1; overflow-y: auto; padding: 10px 20px 14px; }
+
+    .history-list { background: #FFFFFF; border: 1px solid var(--border-hairline); border-radius: 11px; overflow: hidden; }
+    .history-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 10px 14px; border-bottom: 1px solid var(--border-soft); font-size: 13px;
+    }
+    .history-row:last-child { border-bottom: none; }
+    .history-main { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+    .history-time { font-size: 12.5px; color: var(--text-secondary); flex-shrink: 0; }
+    .history-text { min-width: 0; }
+    .history-title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .history-detail { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .history-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .history-status { font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+
+    .terminal-box {
+      background: #FFFFFF; border: 1px solid var(--border-hairline); border-radius: 11px;
+      padding: 10px 14px; min-height: 100%; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.55;
+    }
+    .log-line { display: flex; align-items: baseline; gap: 8px; padding: 2px 0; word-break: break-word; }
+    .log-ts { color: var(--text-secondary); font-size: 12px; flex-shrink: 0; }
+    .log-tag { font-weight: 600; flex-shrink: 0; }
+    .log-tag.ok { color: var(--green-text); }
+    .log-tag.err { color: var(--red-text); }
+    .log-tag.ai { color: var(--purple-text); }
+    .log-tag.slide { color: var(--accent-text); }
+    .log-tag.start { color: var(--orange-text); }
+    .log-tag.info { color: var(--text-secondary); }
+
+    /* macOS Sheets */
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 60; background: rgba(29, 29, 31, 0.28);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .sheet {
+      width: 100%; max-width: 500px; background: #FFFFFF; border-radius: 14px; box-shadow: var(--shadow-sheet);
+      overflow: hidden; display: flex; flex-direction: column; max-height: 90vh;
+    }
+    .sheet-header { padding: 16px 20px; border-bottom: 1px solid var(--border-hairline); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .sheet-title { margin: 0; font-size: 15px; font-weight: 600; }
+    .icon-close-btn {
+      width: 28px; height: 28px; border-radius: 50%; border: none; background: rgba(60, 60, 67, 0.08);
+      color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .icon-close-btn:hover { background: rgba(60, 60, 67, 0.14); color: var(--text-primary); }
+    .sheet-body { padding: 18px 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+    .form-section { display: flex; flex-direction: column; gap: 8px; }
+    .form-section-label { font-size: 13px; font-weight: 600; }
+
+    .radio-group { border: 1px solid var(--border-hairline); border-radius: 11px; overflow: hidden; }
+    .radio-option {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 10px 12px; border-bottom: 1px solid var(--border-soft); cursor: pointer; background: #FFFFFF;
+    }
+    .radio-option:last-child { border-bottom: none; }
+    .radio-option:hover { background: var(--bg-elevated); }
+    .radio-left { display: flex; align-items: center; gap: 10px; }
+    .radio-input { position: absolute; opacity: 0; pointer-events: none; }
+    .radio-circle {
+      width: 17px; height: 17px; border-radius: 50%; border: 1.5px solid var(--border-strong); background: #FFFFFF;
+      display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .radio-input:checked + .radio-circle { border-color: var(--accent-btn); background: var(--accent-btn); }
+    .radio-input:checked + .radio-circle::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #FFFFFF; }
+    .radio-input:focus-visible + .radio-circle { box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.22); }
+    .radio-name { font-size: 13.5px; font-weight: 500; }
+    .radio-desc { font-size: 12px; color: var(--text-secondary); }
+    .tool-badge { font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: 99px; background: rgba(60, 60, 67, 0.08); color: var(--text-secondary); }
+    .tool-badge.ready { background: var(--green-tint); color: var(--green-text); font-weight: 600; }
+
+    .sheet-footer {
+      padding: 14px 20px; border-top: 1px solid var(--border-hairline); background: var(--bg-elevated);
+      display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+    }
+    .cache-stat-card {
+      background: var(--bg-elevated); border: 1px solid var(--border-hairline); border-radius: 11px;
+      padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .cache-big-num { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+    .notice-box {
+      background: var(--red-tint); border: 1px solid rgba(217, 45, 32, 0.20); border-radius: 11px;
+      padding: 12px 14px; font-size: 13px; color: var(--red-text); line-height: 1.45;
+    }
+
+    .sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(29, 29, 31, 0.26); z-index: 25; }
+    .sidebar-backdrop.open { display: block; }
+
+    @media (max-width: 960px) {
+      .sidebar {
+        position: fixed; top: 0; left: 0; bottom: 0; transform: translateX(-100%);
+        transition: transform 0.2s ease; box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
+      }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-close-btn, .mobile-menu-btn { display: inline-flex; }
+    }
+
+    @media (max-width: 760px) {
+      .app-shell { height: auto; min-height: 100vh; overflow: visible; }
+      .main-area { overflow: visible; }
+      .toolbar, .status-strip { padding: 10px 14px; }
+      .curriculum-scroll { padding: 4px 14px 14px; overflow-y: visible; }
+      .drawer-header { padding: 0 14px; }
+      .drawer-content { padding: 10px 14px; }
+      .search-field { width: 100%; }
+      .progress-track { width: 96px; }
+      .bottom-drawer { height: 280px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <div id="sidebar-backdrop" class="sidebar-backdrop" onclick="toggleSidebar(false)"></div>
+
+    <aside id="app-sidebar" class="sidebar" aria-label="Điều hướng học liệu">
+      <div class="sidebar-brand">
+        <div class="brand-lockup">
+          <div class="brand-mark" aria-hidden="true">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 11l3 3L22 4"></path>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <div class="brand-title">EDUX LIFEFORM</div>
+            <div class="brand-subtitle">CMCU LMS v3.0</div>
+          </div>
+        </div>
+        <button type="button" class="sidebar-close-btn" aria-label="Đóng thanh bên" onclick="toggleSidebar(false)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <section class="sidebar-section">
+        <div class="sidebar-section-label">Nguồn học liệu</div>
+        <nav class="nav-list" aria-label="Lọc nguồn học liệu">
+          <button type="button" class="nav-item active" data-filter="all" onclick="setFilterType('all')">
+            <span class="nav-item-left">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="4" rx="1"></rect><rect x="3" y="10" width="18" height="4" rx="1"></rect><rect x="3" y="16" width="18" height="4" rx="1"></rect>
+              </svg>
+              <span>Tất cả chương</span>
+            </span>
+            <span id="count-all" class="nav-count">8</span>
+          </button>
+
+          <button type="button" class="nav-item" data-filter="ai" onclick="setFilterType('ai')">
+            <span class="nav-item-left">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="7" y="7" width="10" height="10" rx="2"></rect>
+                <path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"></path>
+              </svg>
+              <span>Bài tập AI</span>
+            </span>
+            <span id="count-ai" class="nav-count">8</span>
+          </button>
+
+          <button type="button" class="nav-item" data-filter="manual" onclick="setFilterType('manual')">
+            <span class="nav-item-left">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline><line x1="9" y1="15" x2="15" y2="15"></line><line x1="9" y1="11" x2="13" y2="11"></line>
+              </svg>
+              <span>Bài tập thường</span>
+            </span>
+            <span id="count-manual" class="nav-count">6</span>
+          </button>
+
+          <button type="button" class="nav-item" data-filter="slide" onclick="setFilterType('slide')">
+            <span class="nav-item-left">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="14" rx="2"></rect><polygon points="10 8.5 15.5 11 10 13.5 10 8.5"></polygon>
+                <line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="18" x2="12" y2="21"></line>
+              </svg>
+              <span>Slide Trợ giảng</span>
+            </span>
+            <span id="count-slide" class="nav-count">7</span>
+          </button>
+        </nav>
+      </section>
+
+      <section class="sidebar-section">
+        <div class="sidebar-section-label">Hệ thống</div>
+        <div class="inset-list">
+          <div class="status-row">
+            <div class="status-row-left">
+              <span id="chrome-dot" class="status-dot"></span>
+              <span class="status-row-title">Chrome CDP</span>
+            </div>
+            <span id="chrome-status-text" class="status-row-right status-value-ok tabular">9222 · Sẵn sàng</span>
+          </div>
+
+          <button type="button" class="status-row" onclick="openModal('cache-modal')">
+            <div class="status-row-left">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <ellipse cx="12" cy="5" rx="8" ry="3"></ellipse><path d="M4 5v6c0 1.66 3.58 3 8 3s8-1.34 8-3V5"></path><path d="M4 11v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"></path>
+              </svg>
+              <span class="status-row-title">Ngân hàng Cache</span>
+            </div>
+            <span class="status-row-right tabular">
+              <span id="sidebar-cache-count">148 câu</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </span>
+          </button>
+
+          <button type="button" class="status-row" onclick="openModal('settings-modal')">
+            <div class="status-row-left">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+                <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
+                <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line>
+              </svg>
+              <div>
+                <span class="status-row-title">AI CLI Engine</span>
+                <span id="sidebar-ai-label" class="status-row-sub">antigravity · gemini-3.8-flash-low</span>
+              </div>
+            </div>
+            <span class="status-row-right">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </span>
+          </button>
+        </div>
+      </section>
+
+      <section class="sidebar-section">
+        <div class="sidebar-section-label">Thao tác nhanh</div>
+
+        <div class="quick-card">
+          <div class="quick-card-title">Giải theo khoảng câu</div>
+          <div class="stepper-row">
+            <label for="range-start" class="field-label">Từ câu</label>
+            <div class="stepper-group">
+              <button type="button" class="stepper-btn" aria-label="Giảm Từ câu" onclick="adjustStepper('range-start', -1)">-</button>
+              <input id="range-start" class="stepper-input" type="number" min="1" value="1" oninput="validateRange()" onkeydown="if(event.key==='Enter') handleSolveRange()">
+              <button type="button" class="stepper-btn" aria-label="Tăng Từ câu" onclick="adjustStepper('range-start', 1)">+</button>
+            </div>
+          </div>
+          <div class="stepper-row">
+            <label for="range-end" class="field-label">Đến câu</label>
+            <div class="stepper-group">
+              <button type="button" class="stepper-btn" aria-label="Giảm Đến câu" onclick="adjustStepper('range-end', -1)">-</button>
+              <input id="range-end" class="stepper-input" type="number" min="1" value="10" oninput="validateRange()" onkeydown="if(event.key==='Enter') handleSolveRange()">
+              <button type="button" class="stepper-btn" aria-label="Tăng Đến câu" onclick="adjustStepper('range-end', 1)">+</button>
+            </div>
+          </div>
+          <div id="range-error" class="inline-msg" role="alert">Từ câu phải &ge; 1 và nhỏ hơn hoặc bằng Đến câu.</div>
+          <button id="btn-solve-range" type="button" class="btn btn-tinted btn-full" onclick="handleSolveRange()">Giải khoảng câu</button>
+        </div>
+
+        <div class="quick-card">
+          <label for="direct-url-input" class="quick-card-title">Dán URL trực tiếp</label>
+          <div class="url-field-wrap">
+            <input id="direct-url-input" class="text-input" type="url" placeholder="https://edux.cmcu.edu.vn/..." oninput="handleUrlInput()" onkeydown="if(event.key==='Enter') handleSolveUrl()">
+            <button id="clear-url-btn" type="button" class="clear-btn" aria-label="Xóa URL" onclick="clearDirectUrl()">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+          <div id="url-error" class="inline-msg">Vui lòng nhập URL hợp lệ bắt đầu bằng https://</div>
+          <button id="btn-solve-url" type="button" class="btn btn-secondary btn-full" onclick="handleSolveUrl()">Đi tới</button>
+        </div>
+      </section>
+    </aside>
+
+    <main class="main-area">
+      <header class="toolbar">
+        <div class="toolbar-left">
+          <button type="button" class="mobile-menu-btn" aria-label="Mở thanh điều hướng" onclick="toggleSidebar(true)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="9" y1="4" x2="9" y2="20"></line>
+            </svg>
+          </button>
+          <div class="window-title-group">
+            <h1 id="subject-title" class="window-title">Công nghệ phần mềm - K4</h1>
+            <div id="subject-subtitle" class="window-subtitle tabular">8 chương · Hoàn thành 3/8</div>
+          </div>
+        </div>
+
+        <div class="toolbar-controls">
+          <div class="segmented-control" role="tablist" aria-label="Chế độ hiển thị">
+            <button type="button" id="seg-chapter" class="segment-btn active" role="tab" aria-selected="true" onclick="setViewMode('chapter')">Theo Chương</button>
+            <button type="button" id="seg-detail" class="segment-btn" role="tab" aria-selected="false" onclick="setViewMode('detail')">Chi tiết</button>
+          </div>
+
+          <div class="search-field">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input id="search-input" class="search-input" type="search" placeholder="Tìm chương, tuần..." aria-label="Tìm kiếm chương hoặc bài tập" oninput="handleSearchInput()">
+            <button id="clear-search-btn" type="button" class="clear-btn" aria-label="Xóa tìm kiếm" onclick="clearSearch()">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <div class="picker-wrap" title="Tốc độ chạy Slide Trợ giảng">
+            <select id="slide-speed-select" class="picker-select" aria-label="Tốc độ Slide" onchange="appState.slideSpeed = parseFloat(this.value)">
+              <option value="0.25">0.25s · Nhanh (3/3)</option>
+              <option value="0.50">0.50s · Cân bằng</option>
+              <option value="1.00">1.00s · Chậm chắc</option>
+            </select>
+            <svg class="picker-chevrons" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="7 15 12 20 17 15"></polyline><polyline points="7 9 12 4 17 9"></polyline>
+            </svg>
+          </div>
+
+          <div class="toolbar-actions">
+            <button id="btn-scan-course" type="button" class="btn btn-secondary" onclick="handleScanCourse()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+              </svg>
+              <span>Quét lại</span>
+            </button>
+            <button id="btn-run-slide" type="button" class="btn btn-secondary" onclick="handleRunSlide()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="6 4 20 12 6 20 6 4"></polygon>
+              </svg>
+              <span>Chạy Slide</span>
+            </button>
+            <button id="btn-solve-current" type="button" class="btn btn-primary" onclick="handleSolveCurrent()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+              </svg>
+              <span>Giải bài</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <section class="status-strip" aria-label="Trạng thái thực thi">
+        <div class="status-strip-top">
+          <div class="mission-info">
+            <span id="task-badge" class="task-badge">
+              <span class="pulse-dot"></span>
+              <span id="task-badge-text">Sẵn sàng</span>
+            </span>
+            <span id="task-detail-text" class="mission-detail">Sẵn sàng điều khiển phiên học trên Chrome CDP</span>
+            <span id="last-score-pill" class="mission-score-pill tabular">Điểm gần nhất: 9.45/10</span>
+          </div>
+
+          <div class="mission-metrics">
+            <div class="progress-cluster">
+              <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar-wrap">
+                <div id="progress-fill" class="progress-fill"></div>
+              </div>
+              <span id="progress-text" class="progress-text tabular">0/0 (0%)</span>
+            </div>
+            <span id="elapsed-timer" class="timer-pill mono">00:00</span>
+            <button id="btn-stop-task" type="button" class="btn btn-danger" disabled onclick="handleStopTask()">Dừng tác vụ</button>
+          </div>
+        </div>
+
+        <div class="pipeline-row">
+          <div class="pipeline-chips" aria-label="Tiến trình 4 bước">
+            <span id="stage-1" class="stage-chip"><svg class="stage-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>1. Quét đề</span>
+            <span id="stage-2" class="stage-chip"><svg class="stage-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>2. AI CLI</span>
+            <span id="stage-3" class="stage-chip"><svg class="stage-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>3. Tích DOM</span>
+            <span id="stage-4" class="stage-chip"><svg class="stage-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>4. Nộp bài</span>
+          </div>
+          <span id="step-label" class="step-caption">Đang chờ lệnh thực thi</span>
+        </div>
+      </section>
+
+      <div class="curriculum-scroll">
+        <table class="curriculum-table" aria-label="Danh sách chương và bài tập">
+          <thead id="curriculum-thead"></thead>
+          <tbody id="curriculum-tbody"></tbody>
+        </table>
+        <div id="curriculum-empty" class="empty-state" style="display: none;">
+          <div class="empty-state-title">Không tìm thấy mục phù hợp</div>
+          <div>Thử thay đổi từ khóa tìm kiếm hoặc chọn lại bộ lọc ở thanh bên.</div>
+          <div style="margin-top: 12px;">
+            <button type="button" class="btn btn-secondary" onclick="resetFilters()">Xóa bộ lọc</button>
+          </div>
+        </div>
+      </div>
+
+      <section id="bottom-drawer" class="bottom-drawer" aria-label="Nhật ký và lịch sử">
+        <div class="drawer-header">
+          <div class="drawer-header-left">
+            <div class="segmented-control" role="tablist" aria-label="Chuyển tab nhật ký">
+              <button type="button" id="tab-history-btn" class="segment-btn active" role="tab" aria-selected="true" onclick="setBottomTab('history')">Lịch sử &amp; Điểm số</button>
+              <button type="button" id="tab-terminal-btn" class="segment-btn" role="tab" aria-selected="false" onclick="setBottomTab('terminal')">Live Terminal SSE</button>
+            </div>
+            <span id="drawer-summary-count" class="window-subtitle tabular">5 bản ghi gần đây</span>
+          </div>
+
+          <div class="drawer-header-right">
+            <div id="terminal-controls" style="display: none; align-items: center; gap: 12px;">
+              <label class="switch-control" for="autoscroll-switch">
+                <span>Tự cuộn</span>
+                <button id="autoscroll-switch" type="button" class="apple-switch" role="switch" aria-checked="true" onclick="toggleAutoScroll()">
+                  <span class="apple-switch-knob"></span>
+                </button>
+              </label>
+              <button type="button" class="btn btn-secondary" onclick="clearLogs()">Xóa log</button>
+            </div>
+            <button id="drawer-size-btn" type="button" class="btn btn-secondary" onclick="cycleDrawerSize()">
+              <span id="drawer-size-label">Mở rộng</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="drawer-body">
+          <div id="pane-history" class="drawer-content">
+            <div id="history-list" class="history-list"></div>
+          </div>
+          <div id="pane-terminal" class="drawer-content" style="display: none;">
+            <div id="terminal-box" class="terminal-box" aria-live="polite"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Settings Modal Sheet -->
+  <div id="settings-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title" onclick="if(event.target===this) closeModal('settings-modal')">
+    <div class="sheet">
+      <div class="sheet-header">
+        <h2 id="settings-modal-title" class="sheet-title">Cấu hình AI Coding CLI</h2>
+        <button type="button" class="icon-close-btn" aria-label="Đóng" onclick="closeModal('settings-modal')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="sheet-body">
+        <div class="form-section">
+          <div class="form-section-label">Nhà cung cấp AI CLI (Không cần API Key)</div>
+          <div id="provider-radio-group" class="radio-group" role="radiogroup" aria-label="Chọn AI CLI Provider"></div>
+        </div>
+        <div class="form-section">
+          <label for="settings-model-select" class="form-section-label">Mô hình mặc định (Model)</label>
+          <div class="picker-wrap" style="width: 100%;">
+            <select id="settings-model-select" class="picker-select" style="width: 100%; height: 34px; font-size: 13px;">
+              <option value="gemini-3.8-flash-low">gemini-3.8-flash-low</option>
+              <option value="gemini-3.8-flash-medium">gemini-3.8-flash-medium</option>
+              <option value="gemini-4-argon-low">gemini-4-argon-low</option>
+              <option value="gemini-4-argon-medium">gemini-4-argon-medium</option>
+              <option value="claude-sonnet-5-5-low">claude-sonnet-5-5-low</option>
+              <option value="gpt-6-luna">gpt-6-luna</option>
+            </select>
+            <svg class="picker-chevrons" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="7 15 12 20 17 15"></polyline><polyline points="7 9 12 4 17 9"></polyline>
+            </svg>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-label">Mức độ suy luận (Effort)</div>
+          <div class="segmented-control" role="radiogroup" aria-label="Mức độ suy luận">
+            <button type="button" class="segment-btn effort-btn active" data-effort="low" onclick="selectEffort('low')">Low</button>
+            <button type="button" class="segment-btn effort-btn" data-effort="medium" onclick="selectEffort('medium')">Medium</button>
+            <button type="button" class="segment-btn effort-btn" data-effort="high" onclick="selectEffort('high')">High</button>
+          </div>
+        </div>
+      </div>
+      <div class="sheet-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('settings-modal')">Hủy</button>
+        <button type="button" class="btn btn-primary" onclick="saveSettings()">Lưu cấu hình</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cache Modal Sheet -->
+  <div id="cache-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="cache-modal-title" onclick="if(event.target===this) closeModal('cache-modal')">
+    <div class="sheet">
+      <div class="sheet-header">
+        <h2 id="cache-modal-title" class="sheet-title">Ngân hàng câu hỏi Cache</h2>
+        <button type="button" class="icon-close-btn" aria-label="Đóng" onclick="closeModal('cache-modal')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="sheet-body">
+        <div class="cache-stat-card">
+          <div>
+            <div style="font-size: 13px; color: var(--text-secondary); font-weight: 500;">Số câu hỏi đã lưu</div>
+            <div id="modal-cache-count" class="cache-big-num tabular">148 câu</div>
+          </div>
+          <span class="score-pill">Sẵn sàng khớp nhanh</span>
+        </div>
+        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
+          Hệ thống tự động lưu đáp án chuẩn đã xác minh từ các lần giải trước. Khi gặp lại câu hỏi trùng khớp, tác vụ sẽ điền trực tiếp lên DOM mà không cần gọi AI CLI.
+        </div>
+        <div id="cache-feedback" class="inline-msg hint"></div>
+        <div class="notice-box">
+          Thao tác xóa toàn bộ Cache sẽ đặt bộ nhớ đệm về 0 câu. Các lần làm bài sau sẽ phải phân tích lại từ đầu qua AI Coding CLI.
+        </div>
+      </div>
+      <div class="sheet-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('cache-modal')">Đóng</button>
+        <button id="btn-clear-cache" type="button" class="btn btn-danger" onclick="handleClearCache()">Xóa toàn bộ Cache</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const PROVIDERS = [
+      { id: 'auto', name: 'Tự động chọn', desc: 'Ưu tiên CLI có sẵn trên máy' },
+      { id: 'antigravity', name: 'Antigravity CLI', desc: 'agy · Tốc độ cao, hỗ trợ Gemini' },
+      { id: 'codex', name: 'OpenAI Codex CLI', desc: 'codex · Tối ưu suy luận chuẩn xác' },
+      { id: 'claude', name: 'Anthropic Claude Code', desc: 'claude · Đọc hiểu ngữ cảnh dài' },
+      { id: 'opencode', name: 'OpenCode CLI', desc: 'opencode · Tùy biến đa mô hình' }
+    ];
+
+    const DEFAULT_OFFLINE_CHAPTERS = [
+      { week: 'Tuần 1', chapter: 'Chapter 1: Software Products', pct: 100, score: '9.45/10', types: ['slide', 'ai', 'manual'] },
+      { week: 'Tuần 2', chapter: 'Chapter 2: Agile Software Engineering', pct: 100, score: '9.20/10', types: ['slide', 'ai'] },
+      { week: 'Tuần 3', chapter: 'Agile Software Engineering Features, Scenarios and Stories', pct: 100, score: '9.2/10', types: ['slide', 'ai', 'manual'] },
+      { week: 'Tuần 4', chapter: 'Chapter 3: Requirements Engineering', pct: 80, score: '-', types: ['slide', 'ai', 'manual'] },
+      { week: 'Tuần 5', chapter: 'Chapter 4: Software Architecture & Design', pct: 45, score: '-', types: ['slide', 'ai'] },
+      { week: 'Tuần 6', chapter: 'Chapter 5: Cloud & Microservices Patterns', pct: 0, score: '-', types: ['slide', 'ai', 'manual'] },
+      { week: 'Tuần 7', chapter: 'Chapter 6: Software Testing & Verification', pct: 0, score: '-', types: ['slide', 'ai', 'manual'] },
+      { week: 'Tuần 8', chapter: 'Tổng ôn & Đánh giá hệ thống Agile', pct: 0, score: '-', types: ['ai', 'manual'] }
+    ];
+
+    function buildDefaultCourseItems() {
+      const items = [];
+      let stt = 1;
+      const typeTitleMap = { slide: 'Slide bài giảng', ai: 'Bài tập AI', manual: 'Bài tập thường' };
+      DEFAULT_OFFLINE_CHAPTERS.forEach((ch) => {
+        ch.types.forEach((t) => {
+          const isComplete = ch.pct === 100;
+          const pctVal = t === 'slide' ? ch.pct : (isComplete ? 100 : (t === 'ai' && ch.pct >= 45 ? ch.pct : 0));
+          items.push({
+            stt: stt++,
+            week: ch.week,
+            chapter_title: ch.chapter,
+            title: `${typeTitleMap[t]} — ${ch.chapter}`,
+            percent_tg: `${pctVal}%`,
+            percent_val: pctVal,
+            type: typeTitleMap[t],
+            target_type: t,
+            target_title: `${ch.chapter} (${typeTitleMap[t]})`,
+            status: pctVal === 100 ? 'Hoàn thành' : (pctVal > 0 ? 'Đang học' : 'Chưa mở'),
+            highest_score: (t !== 'slide' && ch.score !== '-') ? ch.score : '-',
+            highest_score_val: (t !== 'slide' && ch.score !== '-') ? parseFloat(ch.score) : 0
+          });
+        });
+      });
+      return items;
+    }
+
+    const DEFAULT_HISTORY = [
+      { time: '16:28:38', type: 'ai', title: 'Agile Software Engineering Features, Scenarios and Stories', detail: 'Công nghệ phần mềm - K4 (25/25 câu)', score: '9.2/10', status: 'Đã nộp bài' },
+      { time: '16:13:46', type: 'ai', title: 'Chapter 2: Agile Software Engineering', detail: 'Công nghệ phần mềm - K4 (30/30 câu)', score: '9.20/10', status: 'Đã nộp bài' },
+      { time: '15:54:15', type: 'ai', title: 'Chapter 1: Software Products', detail: 'Công nghệ phần mềm - K4 (30/30 câu)', score: '9.45/10', status: 'Đã nộp bài' },
+      { time: '18:07:15', type: 'slide', title: 'Pháp lý và Đạo đức nghề nghiệp - Slide', detail: 'CMCU V3.2 FIX (35/35 trang)', score: '100% Trợ giảng', status: 'Hoàn thành' },
+      { time: '18:02:42', type: 'manual', title: 'Bài tập trên màn hình', detail: 'Công nghệ phần mềm - K4 (20/20 câu)', score: '8.8/10', status: 'Đã nộp bài' }
+    ];
+
+    const DEFAULT_LOGS = [
+      { ts: '16:28:10', text: '[READY] EDUX ULTIMATE LIFEFORM v3.0 đã khởi tạo bảng điều khiển CMCU LMS.' },
+      { ts: '16:28:12', text: '[OK] Đã gắn kết Chrome CDP cổng 9222 — môn học: Công nghệ phần mềm - K4.' },
+      { ts: '16:28:14', text: '[CACHE] Đã nạp 148 câu hỏi từ bộ nhớ đệm nội bộ.' },
+      { ts: '16:28:22', text: '[AI] Đang dùng Antigravity CLI (gemini-3.8-flash-low) để phân tích 25 câu hỏi.' },
+      { ts: '16:28:38', text: '[KẾT QUẢ] Chapter 3 (Stories): 9.2/10 — Đã nộp bài thành công.' }
+    ];
+
+    const appState = {
+      offlineMode: false,
+      chrome_connected: true,
+      subject_name: 'Công nghệ phần mềm - K4',
+      is_running: false,
+      current_task: '',
+      task_detail: 'Sẵn sàng điều khiển phiên học trên Chrome CDP',
+      cache_count: 148,
+      progress_current: 0,
+      progress_total: 0,
+      progress_percent: 0,
+      step_label: 'Đang chờ lệnh thực thi',
+      active_stage: 0,
+      elapsed_sec: 0,
+      ai_provider: 'antigravity',
+      ai_model: 'gemini-3.8-flash-low',
+      ai_effort: 'low',
+      available_tools: ['antigravity', 'codex', 'claude'],
+      last_score: '9.45/10',
+      viewMode: 'chapter',
+      filterType: 'all',
+      searchQuery: '',
+      slideSpeed: 0.25,
+      bottomTab: 'history',
+      drawerSizeIndex: 0,
+      autoScroll: true,
+      courseItems: buildDefaultCourseItems(),
+      history: [...DEFAULT_HISTORY],
+      chapter_scores: {},
+      logs: [...DEFAULT_LOGS],
+      draftProvider: 'antigravity',
+      draftEffort: 'low'
+    };
+
+    let pollIntervalId = null;
+    let eventSource = null;
+    let simIntervalId = null;
+
+    function nowTimeStr() { return new Date().toTimeString().slice(0, 8); }
+
+    function formatElapsed(sec) {
+      const s = Math.max(0, Math.floor(sec || 0));
+      return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function appendLog(line) {
+      appState.logs.push({ ts: nowTimeStr(), text: line });
+      if (appState.logs.length > 250) appState.logs.shift();
+      renderLogs();
+    }
+
+    function classifyLog(text) {
+      const m = text.match(/^(\[[^\]]+\])\s*(.*)$/);
+      if (!m) return { tag: '', cls: 'info', body: text };
+      const [, tag, body] = m;
+      const u = tag.toUpperCase();
+      let cls = 'info';
+      if (u.includes('OK') || u.includes('KẾT QUẢ') || u.includes('RESULT')) cls = 'ok';
+      else if (u.includes('X') || u.includes('LỖI') || u.includes('ERR') || u.includes('STOP')) cls = 'err';
+      else if (u.includes('AI')) cls = 'ai';
+      else if (u.includes('SLIDE') || u.includes('TURBO') || u.includes('CACHE')) cls = 'slide';
+      else if (u.includes('START') || u.includes('RA SOÁT')) cls = 'start';
+      return { tag, cls, body };
+    }
+
+    function renderLogs() {
+      const box = document.getElementById('terminal-box');
+      if (!box) return;
+      box.innerHTML = appState.logs.map((entry) => {
+        const parsed = classifyLog(entry.text);
+        return `<div class="log-line">
+          <span class="log-ts mono">${escapeHtml(entry.ts)}</span>
+          ${parsed.tag ? `<span class="log-tag ${parsed.cls}">${escapeHtml(parsed.tag)}</span>` : ''}
+          <span>${escapeHtml(parsed.body)}</span>
+        </div>`;
+      }).join('');
+      if (appState.autoScroll && appState.bottomTab === 'terminal') {
+        const pane = document.getElementById('pane-terminal');
+        if (pane) pane.scrollTop = pane.scrollHeight;
+      }
+      updateDrawerSummary();
+    }
+
+    function clearLogs() {
+      appState.logs = [];
+      renderLogs();
+      appendLog('[READY] Đã làm sạch màn hình Terminal.');
+    }
+
+    function toggleAutoScroll() {
+      appState.autoScroll = !appState.autoScroll;
+      document.getElementById('autoscroll-switch').setAttribute('aria-checked', String(appState.autoScroll));
+    }
+
+    function normalizeHistoryItem(item) {
+      return {
+        time: item.time || item.timestamp || nowTimeStr(),
+        type: item.type || item.target_type || 'ai',
+        title: item.title || item.target_title || 'Tác vụ học tập',
+        detail: item.detail || item.subtitle || item.course || appState.subject_name,
+        score: item.score || item.result || '-',
+        status: item.status || item.status_label || 'Hoàn thành'
+      };
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('history-list');
+      if (!container) return;
+      if (!appState.history || appState.history.length === 0) {
+        container.innerHTML = `<div class="history-row"><span class="history-detail">Chưa có lịch sử hoạt động trong phiên này.</span></div>`;
+        updateDrawerSummary();
+        return;
+      }
+      const typeLabelMap = { ai: 'AI', slide: 'Slide', manual: 'Bài tập' };
+      container.innerHTML = appState.history.map((raw) => {
+        const h = normalizeHistoryItem(raw);
+        const typeCls = h.type === 'slide' ? 'slide' : (h.type === 'manual' ? 'manual' : 'ai');
+        return `<div class="history-row">
+          <div class="history-main">
+            <span class="history-time mono">${escapeHtml(h.time)}</span>
+            <span class="type-pill ${typeCls}">${typeLabelMap[typeCls] || 'AI'}</span>
+            <div class="history-text">
+              <div class="history-title">${escapeHtml(h.title)}</div>
+              <div class="history-detail">${escapeHtml(h.detail)}</div>
+            </div>
+          </div>
+          <div class="history-right">
+            ${h.score && h.score !== '-' ? `<span class="score-pill tabular">${escapeHtml(h.score)}</span>` : ''}
+            <span class="history-status">${escapeHtml(h.status)}</span>
+          </div>
+        </div>`;
+      }).join('');
+      updateDrawerSummary();
+    }
+
+    function updateDrawerSummary() {
+      const el = document.getElementById('drawer-summary-count');
+      if (!el) return;
+      el.textContent = appState.bottomTab === 'history'
+        ? `${appState.history.length} bản ghi gần đây`
+        : `${appState.logs.length} dòng log`;
+    }
+
+    function renderCompletionRing(pct) {
+      const safePct = Math.max(0, Math.min(100, Number(pct) || 0));
+      const r = 9;
+      const circ = 2 * Math.PI * r;
+      const offset = circ - (safePct / 100) * circ;
+      const completeCls = safePct === 100 ? 'complete' : '';
+      const zeroCls = safePct === 0 ? 'zero' : '';
+      const checkSvg = safePct === 100
+        ? `<svg class="ring-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>`
+        : '';
+      return `<div class="progress-ring-cell">
+        <span class="ring-wrap">
+          <svg class="ring-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <circle class="ring-track" cx="12" cy="12" r="${r}"></circle>
+            <circle class="ring-fill ${completeCls}" cx="12" cy="12" r="${r}" stroke-dasharray="${circ.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}"></circle>
+          </svg>${checkSvg}
+        </span>
+        <span class="pct-label tabular ${completeCls} ${zeroCls}">${safePct}%</span>
+      </div>`;
+    }
+
+    function groupCourseItemsToChapters(items) {
+      const groups = new Map();
+      items.forEach((item) => {
+        const chTitle = item.chapter_title || item.title.replace(/^(Slide bài giảng|Bài tập AI|Bài tập thường|Bài tập)\s*[—-]\s*/i, '').trim() || item.title;
+        const key = `${item.week}::${chTitle}`;
+        if (!groups.has(key)) {
+          groups.set(key, { week: item.week, chapter: chTitle, items: [], maxPct: 0, bestScore: '-', bestScoreVal: 0 });
+        }
+        const grp = groups.get(key);
+        grp.items.push(item);
+        const pct = Number(item.percent_val) || 0;
+        grp.maxPct = grp.items.length === 1 ? pct : Math.max(grp.maxPct, pct);
+        const mappedScore = appState.chapter_scores[chTitle] || appState.chapter_scores[item.target_title] || item.highest_score;
+        const val = parseFloat(mappedScore);
+        if (!isNaN(val) && val > grp.bestScoreVal) {
+          grp.bestScoreVal = val;
+          grp.bestScore = String(mappedScore).includes('/') ? String(mappedScore) : `${mappedScore}/10`;
+        }
+      });
+      return Array.from(groups.values());
+    }
+
+    function updateSidebarCounts() {
+      const chapters = groupCourseItemsToChapters(appState.courseItems);
+      document.getElementById('count-all').textContent = chapters.length;
+      document.getElementById('count-ai').textContent = chapters.filter(c => c.items.some(i => i.target_type === 'ai')).length;
+      document.getElementById('count-manual').textContent = chapters.filter(c => c.items.some(i => i.target_type === 'manual')).length;
+      document.getElementById('count-slide').textContent = chapters.filter(c => c.items.some(i => i.target_type === 'slide')).length;
+      const done = chapters.filter(c => c.maxPct === 100).length;
+      document.getElementById('subject-subtitle').textContent = `${chapters.length} chương · Hoàn thành ${done}/${chapters.length}`;
+    }
+
+    function renderActionBtn(item) {
+      const disabled = appState.is_running ? 'disabled' : '';
+      const label = item.target_type === 'slide' ? 'Chạy Slide' : (item.target_type === 'ai' ? 'Giải AI' : 'Giải bài');
+      return `<button type="button" class="act-btn ${item.target_type}" ${disabled} data-target-title="${escapeHtml(item.target_title)}" data-target-type="${item.target_type}" onclick="handleSolveSpecificBtn(this)">${label}</button>`;
+    }
+
+    function handleSolveSpecificBtn(btn) {
+      handleSolveSpecific(btn.dataset.targetTitle, btn.dataset.targetType);
+    }
+
+    function renderCurriculum() {
+      const thead = document.getElementById('curriculum-thead');
+      const tbody = document.getElementById('curriculum-tbody');
+      const emptyEl = document.getElementById('curriculum-empty');
+      const query = appState.searchQuery.trim().toLowerCase();
+      updateSidebarCounts();
+
+      if (appState.viewMode === 'chapter') {
+        thead.innerHTML = `<tr><th style="width:82px;">Tuần</th><th>Chương học</th><th style="width:118px;">% Trợ giảng</th><th style="width:122px;">Điểm cao nhất</th><th class="align-right" style="width:280px;">Thao tác</th></tr>`;
+        let chapters = groupCourseItemsToChapters(appState.courseItems);
+        if (appState.filterType !== 'all') chapters = chapters.filter(c => c.items.some(i => i.target_type === appState.filterType));
+        if (query) chapters = chapters.filter(c => c.week.toLowerCase().includes(query) || c.chapter.toLowerCase().includes(query) || c.items.some(i => i.title.toLowerCase().includes(query)));
+        if (chapters.length === 0) { tbody.innerHTML = ''; emptyEl.style.display = 'block'; return; }
+        emptyEl.style.display = 'none';
+        tbody.innerHTML = chapters.map((ch) => {
+          const visibleItems = appState.filterType === 'all' ? ch.items : ch.items.filter(i => i.target_type === appState.filterType);
+          const scoreHtml = ch.bestScore !== '-' ? `<span class="score-pill tabular">${escapeHtml(ch.bestScore)}</span>` : `<span class="score-empty tabular">-</span>`;
+          return `<tr class="curriculum-row">
+            <td><span class="week-badge tabular">${escapeHtml(ch.week)}</span></td>
+            <td><div class="chapter-title-main">${escapeHtml(ch.chapter)}</div><div class="chapter-meta-sub">${escapeHtml(ch.items.map(i => i.type).join(' · '))}</div></td>
+            <td>${renderCompletionRing(ch.maxPct)}</td>
+            <td>${scoreHtml}</td>
+            <td class="align-right"><div class="row-actions">${visibleItems.map(renderActionBtn).join('')}</div></td>
+          </tr>`;
+        }).join('');
+      } else {
+        thead.innerHTML = `<tr><th style="width:56px;">STT</th><th style="width:82px;">Tuần</th><th>Hoạt động</th><th style="width:116px;">Loại</th><th style="width:118px;">% Trợ giảng</th><th style="width:110px;">Điểm</th><th class="align-right" style="width:126px;">Thao tác</th></tr>`;
+        let filtered = appState.courseItems.slice();
+        if (appState.filterType !== 'all') filtered = filtered.filter(i => i.target_type === appState.filterType);
+        if (query) filtered = filtered.filter(i => i.week.toLowerCase().includes(query) || i.title.toLowerCase().includes(query) || i.type.toLowerCase().includes(query));
+        if (filtered.length === 0) { tbody.innerHTML = ''; emptyEl.style.display = 'block'; return; }
+        emptyEl.style.display = 'none';
+        tbody.innerHTML = filtered.map((item) => {
+          const scoreText = appState.chapter_scores[item.target_title] || item.highest_score;
+          const scoreHtml = (scoreText && scoreText !== '-') ? `<span class="score-pill tabular">${escapeHtml(scoreText)}</span>` : `<span class="score-empty tabular">-</span>`;
+          return `<tr class="curriculum-row">
+            <td><span class="week-badge tabular">${item.stt}</span></td>
+            <td><span class="week-badge tabular">${escapeHtml(item.week)}</span></td>
+            <td><div class="chapter-title-main">${escapeHtml(item.title)}</div><div class="chapter-meta-sub">${escapeHtml(item.status)}</div></td>
+            <td><span class="type-pill ${item.target_type}">${escapeHtml(item.type)}</span></td>
+            <td>${renderCompletionRing(item.percent_val)}</td>
+            <td>${scoreHtml}</td>
+            <td class="align-right"><div class="row-actions">${renderActionBtn(item)}</div></td>
+          </tr>`;
+        }).join('');
+      }
+    }
+
+    function renderStatusUI() {
+      document.getElementById('subject-title').textContent = appState.subject_name || 'Chưa nhận diện môn học';
+      const dot = document.getElementById('chrome-dot');
+      const chromeText = document.getElementById('chrome-status-text');
+      dot.classList.toggle('offline', !appState.chrome_connected);
+      chromeText.className = appState.chrome_connected ? 'status-row-right status-value-ok tabular' : 'status-row-right status-value-bad';
+      chromeText.textContent = appState.chrome_connected ? '9222 · Sẵn sàng' : 'Mất kết nối';
+
+      document.getElementById('sidebar-cache-count').textContent = `${appState.cache_count} câu`;
+      document.getElementById('modal-cache-count').textContent = `${appState.cache_count} câu`;
+      document.getElementById('sidebar-ai-label').textContent = `${appState.ai_provider} · ${appState.ai_model}`;
+
+      const badge = document.getElementById('task-badge');
+      const badgeText = document.getElementById('task-badge-text');
+      badge.classList.remove('running', 'success');
+      if (appState.is_running) {
+        badge.classList.add('running');
+        const map = { solve_ai: 'Đang giải AI', slide: 'Đang chạy Slide', solve_current: 'Đang giải bài', solve_range: 'Giải khoảng câu', scan: 'Đang quét đề' };
+        badgeText.textContent = map[appState.current_task] || 'Đang thực thi';
+      } else if (appState.progress_percent === 100) {
+        badge.classList.add('success');
+        badgeText.textContent = 'Hoàn tất';
+      } else {
+        badgeText.textContent = 'Sẵn sàng';
+      }
+
+      document.getElementById('task-detail-text').textContent = appState.task_detail || 'Sẵn sàng điều khiển phiên học';
+      const lastScoreEl = document.getElementById('last-score-pill');
+      if (appState.last_score && appState.last_score !== '-') {
+        lastScoreEl.style.display = 'inline-flex';
+        lastScoreEl.textContent = `Điểm gần nhất: ${appState.last_score}`;
+      } else {
+        lastScoreEl.style.display = 'none';
+      }
+
+      const pct = Math.max(0, Math.min(100, Math.round(appState.progress_percent || 0)));
+      document.getElementById('progress-fill').style.width = `${pct}%`;
+      document.getElementById('progress-bar-wrap').setAttribute('aria-valuenow', String(pct));
+      document.getElementById('progress-text').textContent = `${appState.progress_current}/${appState.progress_total} (${pct}%)`;
+      document.getElementById('elapsed-timer').textContent = formatElapsed(appState.elapsed_sec);
+      document.getElementById('step-label').textContent = appState.step_label || 'Đang chờ lệnh';
+
+      document.getElementById('btn-stop-task').disabled = !appState.is_running;
+      document.getElementById('btn-scan-course').disabled = appState.is_running;
+      document.getElementById('btn-run-slide').disabled = appState.is_running;
+      document.getElementById('btn-solve-current').disabled = appState.is_running;
+      document.getElementById('btn-solve-url').disabled = appState.is_running;
+
+      const activeStage = Number(appState.active_stage) || 0;
+      for (let i = 1; i <= 4; i++) {
+        const chip = document.getElementById(`stage-${i}`);
+        chip.classList.remove('active', 'done');
+        if (activeStage > 0) {
+          if (i < activeStage || (!appState.is_running && pct === 100)) chip.classList.add('done');
+          else if (i === activeStage) chip.classList.add('active');
+        }
+      }
+      validateRange();
+    }
+
+    function setFilterType(type) {
+      appState.filterType = type;
+      document.querySelectorAll('.nav-item').forEach((btn) => btn.classList.toggle('active', btn.dataset.filter === type));
+      renderCurriculum();
+      if (window.innerWidth <= 960) toggleSidebar(false);
+    }
+
+    function setViewMode(mode) {
+      appState.viewMode = mode;
+      const isChap = mode === 'chapter';
+      document.getElementById('seg-chapter').classList.toggle('active', isChap);
+      document.getElementById('seg-chapter').setAttribute('aria-selected', String(isChap));
+      document.getElementById('seg-detail').classList.toggle('active', !isChap);
+      document.getElementById('seg-detail').setAttribute('aria-selected', String(!isChap));
+      renderCurriculum();
+    }
+
+    function handleSearchInput() {
+      const inp = document.getElementById('search-input');
+      appState.searchQuery = inp.value;
+      document.getElementById('clear-search-btn').classList.toggle('visible', inp.value.length > 0);
+      renderCurriculum();
+    }
+
+    function clearSearch() {
+      const inp = document.getElementById('search-input');
+      inp.value = '';
+      appState.searchQuery = '';
+      document.getElementById('clear-search-btn').classList.remove('visible');
+      renderCurriculum();
+      inp.focus();
+    }
+
+    function resetFilters() { clearSearch(); setFilterType('all'); }
+
+    function adjustStepper(id, delta) {
+      const inp = document.getElementById(id);
+      inp.value = Math.max(1, (parseInt(inp.value, 10) || 1) + delta);
+      validateRange();
+    }
+
+    function validateRange() {
+      const s = parseInt(document.getElementById('range-start').value, 10);
+      const e = parseInt(document.getElementById('range-end').value, 10);
+      const valid = !isNaN(s) && !isNaN(e) && s >= 1 && e >= 1 && s <= e;
+      document.getElementById('range-error').classList.toggle('visible', !valid);
+      document.getElementById('btn-solve-range').disabled = !valid || appState.is_running;
+      return valid;
+    }
+
+    function handleUrlInput() {
+      const inp = document.getElementById('direct-url-input');
+      const val = inp.value.trim();
+      document.getElementById('clear-url-btn').classList.toggle('visible', inp.value.length > 0);
+      const errEl = document.getElementById('url-error');
+      if (val && !/^https?:\/\/.+/i.test(val)) {
+        errEl.textContent = 'URL cần bắt đầu bằng https:// hoặc http://';
+        errEl.classList.remove('hint');
+        errEl.classList.add('visible');
+      } else if (val && !val.includes('edux.cmcu.edu.vn')) {
+        errEl.textContent = 'Gợi ý: Nên dùng đường dẫn thuộc edux.cmcu.edu.vn';
+        errEl.classList.add('hint', 'visible');
+      } else {
+        errEl.classList.remove('visible', 'hint');
+      }
+    }
+
+    function clearDirectUrl() {
+      const inp = document.getElementById('direct-url-input');
+      inp.value = '';
+      handleUrlInput();
+      inp.focus();
+    }
+
+    function setBottomTab(tab) {
+      appState.bottomTab = tab;
+      const isHist = tab === 'history';
+      document.getElementById('tab-history-btn').classList.toggle('active', isHist);
+      document.getElementById('tab-history-btn').setAttribute('aria-selected', String(isHist));
+      document.getElementById('tab-terminal-btn').classList.toggle('active', !isHist);
+      document.getElementById('tab-terminal-btn').setAttribute('aria-selected', String(!isHist));
+      document.getElementById('pane-history').style.display = isHist ? 'block' : 'none';
+      document.getElementById('pane-terminal').style.display = isHist ? 'none' : 'block';
+      document.getElementById('terminal-controls').style.display = isHist ? 'none' : 'flex';
+      if (!isHist && appState.autoScroll) {
+        const pane = document.getElementById('pane-terminal');
+        pane.scrollTop = pane.scrollHeight;
+      }
+      updateDrawerSummary();
+    }
+
+    function cycleDrawerSize() {
+      const drawer = document.getElementById('bottom-drawer');
+      const label = document.getElementById('drawer-size-label');
+      appState.drawerSizeIndex = (appState.drawerSizeIndex + 1) % 3;
+      drawer.classList.remove('expanded', 'collapsed');
+      if (appState.drawerSizeIndex === 1) { drawer.classList.add('expanded'); label.textContent = 'Thu gọn'; }
+      else if (appState.drawerSizeIndex === 2) { drawer.classList.add('collapsed'); label.textContent = 'Hiển thị'; }
+      else { label.textContent = 'Mở rộng'; }
+    }
+
+    function toggleSidebar(open) {
+      document.getElementById('app-sidebar').classList.toggle('open', open);
+      document.getElementById('sidebar-backdrop').classList.toggle('open', open);
+    }
+
+    function openModal(id) {
+      if (id === 'settings-modal') {
+        appState.draftProvider = appState.ai_provider;
+        appState.draftEffort = appState.ai_effort;
+        renderSettingsModal();
+      } else if (id === 'cache-modal') {
+        document.getElementById('cache-feedback').classList.remove('visible');
+        document.getElementById('modal-cache-count').textContent = `${appState.cache_count} câu`;
+      }
+      document.getElementById(id).classList.add('open');
+    }
+
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    function renderSettingsModal() {
+      const group = document.getElementById('provider-radio-group');
+      group.innerHTML = PROVIDERS.map((p) => {
+        const checked = appState.draftProvider === p.id ? 'checked' : '';
+        const isReady = p.id === 'auto' || appState.available_tools.includes(p.id);
+        return `<label class="radio-option">
+          <span class="radio-left">
+            <input class="radio-input" type="radio" name="ai-provider" value="${p.id}" ${checked} onchange="appState.draftProvider='${p.id}'">
+            <span class="radio-circle" aria-hidden="true"></span>
+            <span><div class="radio-name">${escapeHtml(p.name)}</div><div class="radio-desc">${escapeHtml(p.desc)}</div></span>
+          </span>
+          <span class="tool-badge ${isReady ? 'ready' : ''}">${isReady ? 'Sẵn sàng' : 'Chưa cài'}</span>
+        </label>`;
+      }).join('');
+      document.getElementById('settings-model-select').value = appState.ai_model;
+      selectEffort(appState.draftEffort);
+    }
+
+    function selectEffort(effort) {
+      appState.draftEffort = effort;
+      document.querySelectorAll('.effort-btn').forEach((btn) => btn.classList.toggle('active', btn.dataset.effort === effort));
+    }
+
+    async function apiPost(endpoint, payload) {
+      if (appState.offlineMode) return { simulated: true };
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload ? JSON.stringify(payload) : '{}'
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json().catch(() => ({}));
+    }
+
+    function startOfflineSimulation(taskType, detail, totalSteps, onComplete) {
+      if (simIntervalId) clearInterval(simIntervalId);
+      appState.is_running = true;
+      appState.current_task = taskType;
+      appState.task_detail = detail;
+      appState.progress_current = 0;
+      appState.progress_total = totalSteps;
+      appState.progress_percent = 0;
+      appState.elapsed_sec = 0;
+      appState.active_stage = 1;
+      appState.step_label = 'Bước 1/4: Đang quét dữ liệu câu hỏi trên DOM...';
+      renderStatusUI();
+      renderCurriculum();
+      const isSlide = taskType === 'slide';
+      appendLog(`[START] Bắt đầu tác vụ: ${detail}`);
+
+      let tick = 0;
+      simIntervalId = setInterval(() => {
+        tick++;
+        appState.elapsed_sec = tick;
+        const ratio = Math.min(1, tick / 8);
+        appState.progress_current = Math.max(1, Math.round(totalSteps * ratio));
+        appState.progress_percent = Math.round(ratio * 100);
+
+        if (tick === 2) {
+          appState.active_stage = 2;
+          appState.step_label = isSlide
+            ? `Bước 2/4: Đang kích hoạt trình chuyển trang tốc độ ${appState.slideSpeed}s...`
+            : `Bước 2/4: Gọi ${appState.ai_provider} (${appState.ai_model}) suy luận đáp án...`;
+          appendLog(isSlide ? `[SLIDE] Đang chạy CMCU-Vạn-Năng tốc độ ${appState.slideSpeed}s/trang.` : `[AI] Đang gửi đề lên ${appState.ai_provider} CLI (${appState.ai_model}, effort: ${appState.ai_effort}).`);
+        } else if (tick === 4 || tick === 5) {
+          appState.active_stage = 3;
+          appState.step_label = isSlide
+            ? `Bước 3/4: Đang đồng bộ tiến độ Trợ giảng (${appState.progress_current}/${totalSteps} trang)...`
+            : `Bước 3/4: Đang tích chọn đáp án lên DOM (${appState.progress_current}/${totalSteps} câu)...`;
+          if (tick === 4) appendLog(isSlide ? `[TURBO] Đã vượt qua ${appState.progress_current}/${totalSteps} trang slide.` : `[OK] Đã khớp và tích chọn ${appState.progress_current}/${totalSteps} câu hỏi trên trang.`);
+        } else if (tick === 7) {
+          appState.active_stage = 4;
+          appState.step_label = 'Bước 4/4: Đang rà soát và xác nhận nộp bài...';
+          appendLog('[RA SOÁT] Kiểm tra lại toàn bộ lựa chọn trước khi nộp.');
+        } else if (tick >= 8) {
+          clearInterval(simIntervalId);
+          simIntervalId = null;
+          appState.is_running = false;
+          appState.active_stage = 4;
+          appState.progress_current = totalSteps;
+          appState.progress_percent = 100;
+          appState.step_label = 'Hoàn thành tác vụ thành công';
+          if (onComplete) onComplete();
+          renderStatusUI();
+          renderCurriculum();
+          renderHistory();
+          return;
+        }
+        renderStatusUI();
+      }, 450);
+    }
+
+    function applySimulatedCompletion(title, targetType) {
+      const score = targetType === 'slide' ? '100% Trợ giảng' : '9.60/10';
+      if (targetType !== 'slide') { appState.last_score = score; appState.cache_count += 4; }
+      appState.courseItems.forEach((item) => {
+        if (item.target_title === title || title.includes(item.chapter_title)) {
+          if (item.target_type === targetType || targetType === 'slide') {
+            item.percent_val = 100; item.percent_tg = '100%'; item.status = 'Hoàn thành';
+          }
+          if (targetType !== 'slide' && item.target_type !== 'slide') {
+            item.highest_score = score; item.highest_score_val = 9.6;
+          }
+        }
+      });
+      appState.history.unshift({
+        time: nowTimeStr(), type: targetType, title,
+        detail: `${appState.subject_name} (${appState.progress_total}/${appState.progress_total} mục)`,
+        score, status: targetType === 'slide' ? 'Hoàn thành' : 'Đã nộp bài'
+      });
+      appendLog(`[KẾT QUẢ] ${title}: ${score} — Hoàn tất thành công.`);
+    }
+
+    async function handleSolveCurrent() {
+      try {
+        const res = await apiPost('/api/action/solve_current');
+        if (res.simulated) startOfflineSimulation('solve_current', 'Giải bài đang mở trên trình duyệt', 25, () => applySimulatedCompletion('Bài tập đang mở trên màn hình', 'manual'));
+        else appendLog('[START] Đã gửi lệnh giải bài đang mở.');
+      } catch (e) { appendLog(`[Lỗi] Không thể gửi lệnh giải bài: ${e.message}`); }
+    }
+
+    async function handleRunSlide() {
+      const speed = Number(document.getElementById('slide-speed-select').value) || 0.25;
+      appState.slideSpeed = speed;
+      try {
+        const res = await apiPost('/api/action/slide', { speed });
+        if (res.simulated) startOfflineSimulation('slide', `Chạy Slide Trợ giảng (${speed}s/trang)`, 35, () => applySimulatedCompletion('Slide Trợ giảng đang mở', 'slide'));
+        else appendLog(`[SLIDE] Đã kích hoạt chạy Slide tốc độ ${speed}s.`);
+      } catch (e) { appendLog(`[Lỗi] Không thể chạy Slide: ${e.message}`); }
+    }
+
+    async function handleSolveRange() {
+      if (!validateRange()) return;
+      const start_q = parseInt(document.getElementById('range-start').value, 10);
+      const end_q = parseInt(document.getElementById('range-end').value, 10);
+      try {
+        const res = await apiPost('/api/action/solve_range', { start_q, end_q });
+        if (res.simulated) startOfflineSimulation('solve_range', `Giải từ câu ${start_q} đến câu ${end_q}`, end_q - start_q + 1, () => applySimulatedCompletion(`Giải khoảng câu ${start_q}–${end_q}`, 'ai'));
+        else appendLog(`[START] Đã gửi lệnh giải khoảng câu ${start_q}–${end_q}.`);
+      } catch (e) { appendLog(`[Lỗi] Không thể giải khoảng câu: ${e.message}`); }
+    }
+
+    async function handleSolveUrl() {
+      const inp = document.getElementById('direct-url-input');
+      const url = inp.value.trim();
+      const errEl = document.getElementById('url-error');
+      if (!/^https?:\/\/.+/i.test(url)) {
+        errEl.textContent = 'Vui lòng nhập URL hợp lệ bắt đầu bằng https://';
+        errEl.classList.remove('hint');
+        errEl.classList.add('visible');
+        inp.focus();
+        return;
+      }
+      try {
+        const res = await apiPost('/api/action/solve_url', { url });
+        if (res.simulated) startOfflineSimulation('solve_ai', `Điều hướng và giải URL: ${url}`, 20, () => applySimulatedCompletion(url, 'ai'));
+        else appendLog(`[START] Đã điều hướng tới URL: ${url}`);
+      } catch (e) { appendLog(`[Lỗi] Không thể mở URL: ${e.message}`); }
+    }
+
+    async function handleScanCourse() {
+      try {
+        const res = await apiPost('/api/action/scan_course');
+        if (res && res.simulated) {
+          appendLog('[SCAN] Đang quét lại cây chương từ Chrome CDP...');
+          setTimeout(() => { renderCurriculum(); appendLog(`[OK] Đã đồng bộ ${appState.courseItems.length} mục học liệu trong ${appState.subject_name}.`); }, 250);
+        } else {
+          const items = Array.isArray(res) ? res : (Array.isArray(res?.items) ? res.items : null);
+          if (items) { appState.courseItems = items; renderCurriculum(); appendLog(`[SCAN] Đã quét xong ${items.length} mục học liệu.`); }
+        }
+      } catch (e) { appendLog(`[Lỗi] Quét khóa học thất bại: ${e.message}`); }
+    }
+
+    async function handleSolveSpecific(title, target_type) {
+      try {
+        const res = await apiPost('/api/action/solve_specific', { title, target_type });
+        if (res.simulated) {
+          const taskKey = target_type === 'slide' ? 'slide' : (target_type === 'ai' ? 'solve_ai' : 'solve_current');
+          startOfflineSimulation(taskKey, title, target_type === 'slide' ? 35 : 25, () => applySimulatedCompletion(title, target_type));
+        } else appendLog(`[START] Đang chạy (${target_type}): ${title}`);
+      } catch (e) { appendLog(`[Lỗi] Không thể chạy mục "${title}": ${e.message}`); }
+    }
+
+    function handleStopTask() {
+      if (simIntervalId) { clearInterval(simIntervalId); simIntervalId = null; }
+      appState.is_running = false;
+      appState.active_stage = 0;
+      appState.step_label = 'Đã dừng tác vụ theo yêu cầu';
+      appState.task_detail = 'Tác vụ đã được dừng an toàn';
+      appendLog('[STOP] Đã dừng tác vụ đang chạy.');
+      renderStatusUI();
+      renderCurriculum();
+      if (!appState.offlineMode) {
+        apiPost('/api/action/stop').catch(() => {});
+      }
+    }
+
+    async function saveSettings() {
+      const provider = appState.draftProvider;
+      const model = document.getElementById('settings-model-select').value;
+      const effort = appState.draftEffort;
+      try {
+        await apiPost('/api/config', { provider, model, effort });
+        appState.ai_provider = provider; appState.ai_model = model; appState.ai_effort = effort;
+        appendLog(`[CONFIG] Đã cập nhật AI CLI: ${provider} · ${model} (effort: ${effort}).`);
+        renderStatusUI();
+        closeModal('settings-modal');
+      } catch (e) { appendLog(`[Lỗi] Không thể lưu cấu hình: ${e.message}`); }
+    }
+
+    async function handleClearCache() {
+      const prev = appState.cache_count;
+      try {
+        if (!appState.offlineMode) {
+          const res = await fetch('/api/cache', { method: 'DELETE' });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        }
+        appState.cache_count = 0;
+        const fb = document.getElementById('cache-feedback');
+        fb.textContent = `Đã xóa thành công ${prev} câu hỏi trong bộ nhớ đệm.`;
+        fb.classList.add('visible');
+        appendLog(`[CACHE] Đã xóa toàn bộ ${prev} câu hỏi trong bộ nhớ đệm.`);
+        renderStatusUI();
+      } catch (e) { appendLog(`[Lỗi] Không thể xóa Cache: ${e.message}`); }
+    }
+
+    function applyServerStatus(data) {
+      if (!data || typeof data !== 'object') return;
+      appState.chrome_connected = Boolean(data.chrome_connected);
+      if (data.subject_name) appState.subject_name = data.subject_name;
+      appState.is_running = Boolean(data.is_running);
+      appState.current_task = data.current_task || '';
+      appState.task_detail = data.task_detail || 'Sẵn sàng';
+      if (typeof data.cache_count === 'number') appState.cache_count = data.cache_count;
+      appState.progress_current = data.progress_current || 0;
+      appState.progress_total = data.progress_total || 0;
+      appState.progress_percent = data.progress_percent || 0;
+      appState.step_label = data.step_label || 'Đang chờ lệnh';
+      appState.active_stage = data.active_stage || 0;
+      appState.elapsed_sec = data.elapsed_sec || 0;
+      if (data.ai_provider) appState.ai_provider = data.ai_provider;
+      if (data.ai_model) appState.ai_model = data.ai_model;
+      if (Array.isArray(data.available_tools)) appState.available_tools = data.available_tools;
+      if (data.last_score !== undefined) appState.last_score = data.last_score;
+      if (Array.isArray(data.history)) appState.history = data.history;
+      if (data.chapter_scores && typeof data.chapter_scores === 'object') appState.chapter_scores = data.chapter_scores;
+      renderStatusUI();
+      renderCurriculum();
+      renderHistory();
+    }
+
+    function startSSE() {
+      if (appState.offlineMode || eventSource) return;
+      try {
+        eventSource = new EventSource('/api/logs');
+        eventSource.onmessage = (ev) => { if (ev.data) appendLog(ev.data); };
+        eventSource.onerror = () => { if (eventSource) { eventSource.close(); eventSource = null; } };
+      } catch (_) {}
+    }
+
+    async function initConnection() {
+      if (window.location.protocol === 'file:') {
+        appState.offlineMode = true;
+        renderAll();
+        return;
+      }
+      try {
+        const res = await fetch('/api/status', { cache: 'no-store' });
+        if (!res.ok) throw new Error('Offline preview');
+        applyServerStatus(await res.json());
+        appState.offlineMode = false;
+        startSSE();
+        pollIntervalId = setInterval(async () => {
+          try {
+            const r = await fetch('/api/status', { cache: 'no-store' });
+            if (r.ok) applyServerStatus(await r.json());
+          } catch (_) {}
+        }, 1500);
+      } catch (_) {
+        appState.offlineMode = true;
+        renderAll();
+      }
+    }
+
+    function renderAll() { renderStatusUI(); renderCurriculum(); renderHistory(); renderLogs(); }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { closeModal('settings-modal'); closeModal('cache-modal'); toggleSidebar(false); }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => { renderAll(); initConnection(); });
+  </script>
+</body>
+</html>
