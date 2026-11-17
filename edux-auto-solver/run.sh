@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-#  EDUX ULTIMATE LIFEFORM v3.0 - SCRIPT KHỞI CHẠY DÀNH CHO LINUX
+#  EDUX ULTIMATE LIFEFORM v0.6 - SCRIPT KHỞI CHẠY DÀNH CHO LINUX
 #  Công nghệ: AI Coding CLI (Antigravity / Codex) + CMCU-Vạn-Năng V3.2 FIX
 #  Không cần Gemini API Key!
 # =============================================================================
@@ -20,7 +20,7 @@ export PATH="$HOME/.local/bin:$HOME/.gemini/antigravity/bin:$HOME/.config/Antigr
 
 echo ""
 echo -e "\033[1;36m==========================================================================\033[0m"
-echo -e "\033[1;33m   ⚡ EDUX ULTIMATE LIFEFORM v3.0 - KHỞI CHẠY TRÊN LINUX ⚡\033[0m"
+echo -e "\033[1;33m   ⚡ EDUX ULTIMATE LIFEFORM v0.6 - KHỞI CHẠY TRÊN LINUX ⚡\033[0m"
 echo -e "\033[1;32m   AI Coding CLI (Antigravity & Codex) + CMCU-Vạn-Năng V3.2 FIX (3/3)\033[0m"
 echo -e "\033[1;36m==========================================================================\033[0m"
 echo ""
@@ -163,10 +163,10 @@ if [ $# -gt 0 ]; then
     exec "$VENV_PYTHON" main.py "$@"
 fi
 
-# Nếu không truyền tham số, hiển thị menu nhanh cho phép chọn chế độ CLI v3.0 hoặc Web Dashboard
+# Nếu không truyền tham số, hiển thị menu nhanh cho phép chọn chế độ CLI v0.6 hoặc Web Dashboard
 echo ""
 echo -e "\033[1;36mChọn chế độ điều khiển:\033[0m"
-echo -e "  \033[1;33m[1]\033[0m Mở \033[1;32mCông cụ CLI v3.0 (Terminal)\033[0m + chạy ngầm Web Dashboard (Khuyên dùng)"
+echo -e "  \033[1;33m[1]\033[0m Mở \033[1;32mCông cụ CLI v0.6 (Terminal)\033[0m + chạy ngầm Web Dashboard (Khuyên dùng)"
 echo -e "  \033[1;33m[2]\033[0m Mở \033[1;36mWeb Dashboard (http://127.0.0.1:8765)\033[0m trên trình duyệt"
 echo -e "  \033[1;33m[3]\033[0m Chạy ngay \033[1;35mCMCU-Vạn-Năng V3.2 FIX\033[0m trên Slide đang mở"
 echo -e "  \033[1;33m[4]\033[0m Giải ngay \033[1;32mBài tập đang mở\033[0m bằng AI Coding CLI"

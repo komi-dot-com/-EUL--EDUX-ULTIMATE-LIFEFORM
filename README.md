@@ -1,11 +1,11 @@
-# EDUX ULTIMATE LIFEFORM v3.0 - CMCU LMS (AI CODING CLI & CMCU-VẠN-NĂNG V3.2 FIX)
+# EDUX ULTIMATE LIFEFORM v0.6 - CMCU LMS (AI CODING CLI & CMCU-VẠN-NĂNG V3.2 FIX)
 
 Hệ thống tự động hóa thông minh hỗ trợ giải bài tập trắc nghiệm, đúng/sai (4 mệnh đề con), tự luận và **chạy slide học liệu (100% Trợ giảng)** trên hệ thống EduX CMCU (`https://edux.cmcu.edu.vn`).
 
-Phiên bản **v3.0** được viết lại toàn diện:
+Phiên bản **v0.6** được viết lại toàn diện:
 1. **Không cần Gemini API Key**: Kết nối trực tiếp vào các công cụ AI Coding CLI có sẵn trên máy (**Google Antigravity `agy`**, **OpenAI Codex `codex`**, **Claude Code `claude`**, **OpenCode `opencode`**).
 2. **Công cụ chạy Slide CMCU-Vạn-Năng V3.2 FIX**: Tích hợp nguyên bản bộ engine **CMCU-Vạn-Năng-V3.2 FIX** do bạn phát triển (đã sửa lỗi tự qua câu & chống dừng sớm tại trang cuối với cơ chế xác nhận 3/3 nhịp liên tiếp).
-3. **Công cụ CLI v3.0 mới & Script khởi chạy chuẩn cho Linux (`run.sh`)**: Hỗ trợ điều khiển trực tiếp qua Terminal CLI, cờ dòng lệnh (`--cli`, `--web`, `--slide`, `--solve`), hoặc giao diện Web Dashboard (`http://127.0.0.1:8765`).
+3. **Công cụ CLI v0.6 mới & Script khởi chạy chuẩn cho Linux (`run.sh`)**: Hỗ trợ điều khiển trực tiếp qua Terminal CLI, cờ dòng lệnh (`--cli`, `--web`, `--slide`, `--solve`), hoặc giao diện Web Dashboard (`http://127.0.0.1:8765`).
 
 ---
 
@@ -17,8 +17,8 @@ Tại thư mục gốc hoặc thư mục `edux-auto-solver`, chạy:
 ./run.sh
 ```
 
-Hoặc sử dụng các cờ chạy nhanh của **CLI v3.0**:
-- Mở trực tiếp **Bảng điều khiển CLI v3.0** trên Terminal:
+Hoặc sử dụng các cờ chạy nhanh của **CLI v0.6**:
+- Mở trực tiếp **Bảng điều khiển CLI v0.6** trên Terminal:
   ```bash
   ./run.sh --cli
   ```
@@ -37,7 +37,7 @@ Hoặc sử dụng các cờ chạy nhanh của **CLI v3.0**:
 
 ---
 
-## 🎯 CÁC CHỨC NĂNG TRONG CÔNG CỤ CLI MỚI (v3.0)
+## 🎯 CÁC CHỨC NĂNG TRONG CÔNG CỤ CLI MỚI (v0.6)
 
 - **Phím `[1]` - Quét môn học & Chạy tự động (Slide / Bài tập)**:
   - Quét toàn bộ danh sách Chương, % Trợ giảng, Slide, Bài tập AI, Bài tập thường.

@@ -1,4 +1,4 @@
-# EDUX ULTIMATE LIFEFORM v3.0 - CMCU LMS (AI CODING CLI & CMCU-VẠN-NĂNG V3.2 FIX)
+# EDUX ULTIMATE LIFEFORM v0.6 - CMCU LMS (AI CODING CLI & CMCU-VẠN-NĂNG V3.2 FIX)
 
 Hệ thống tự động hóa thông minh hỗ trợ giải bài tập trắc nghiệm, đúng/sai (4 mệnh đề con), tự luận và **chạy slide học liệu (100% Trợ giảng)** trên hệ thống EduX CMCU (`https://edux.cmcu.edu.vn`).
 
