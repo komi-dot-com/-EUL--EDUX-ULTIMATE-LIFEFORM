@@ -15,12 +15,14 @@ if [ -d "edux-auto-solver" ] && [ -f "edux-auto-solver/main.py" ]; then
     cd edux-auto-solver
 fi
 
-# Bổ sung PATH cho các công cụ AI Coding CLI (agy, codex, claude, opencode)
-export PATH="$HOME/.local/bin:$HOME/.gemini/antigravity/bin:$HOME/.config/Antigravity/bin:$HOME/.opencode/bin:/usr/local/bin:/usr/bin:$PATH"
+# Bổ sung PATH cho các công cụ AI Coding CLI (agy, codex, claude, opencode) và Homebrew trên macOS
+export PATH="$HOME/.local/bin:$HOME/.gemini/antigravity/bin:$HOME/.config/Antigravity/bin:$HOME/.opencode/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:$PATH"
+
+OS_NAME="$(uname -s)"
 
 echo ""
 echo -e "\033[1;36m==========================================================================\033[0m"
-echo -e "\033[1;33m   ⚡ EDUX ULTIMATE LIFEFORM v0.6 - KHỞI CHẠY TRÊN LINUX ⚡\033[0m"
+echo -e "\033[1;33m   ⚡ EDUX ULTIMATE LIFEFORM v0.6 - KHỞI CHẠY TRÊN ${OS_NAME} ⚡\033[0m"
 echo -e "\033[1;32m   AI Coding CLI (Antigravity & Codex) + CMCU-Vạn-Năng V3.2 FIX (3/3)\033[0m"
 echo -e "\033[1;36m==========================================================================\033[0m"
 echo ""
@@ -119,15 +121,36 @@ if [ "$CDP_READY" = false ]; then
     rm -rf "$CHROME_PROFILE/Default/Sessions"/* 2>/dev/null || true
 
     CHROME_BIN=""
-    for candidate in google-chrome google-chrome-stable chromium chromium-browser brave-browser microsoft-edge /usr/bin/google-chrome /usr/bin/chromium /usr/bin/chromium-browser /snap/bin/chromium; do
-        if command -v "$candidate" &>/dev/null; then
-            CHROME_BIN="$(command -v "$candidate")"
-            break
-        fi
-    done
+    if [ "$OS_NAME" = "Darwin" ]; then
+        for mac_candidate in \
+            "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+            "$HOME/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+            "/Applications/Chromium.app/Contents/MacOS/Chromium" \
+            "$HOME/Applications/Chromium.app/Contents/MacOS/Chromium" \
+            "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" \
+            "$HOME/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" \
+            "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" \
+            "$HOME/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" \
+            "/Applications/Arc.app/Contents/MacOS/Arc" \
+            "/Applications/Vivaldi.app/Contents/MacOS/Vivaldi"; do
+            if [ -x "$mac_candidate" ]; then
+                CHROME_BIN="$mac_candidate"
+                break
+            fi
+        done
+    fi
+
+    if [ -z "$CHROME_BIN" ]; then
+        for candidate in google-chrome google-chrome-stable chromium chromium-browser brave-browser microsoft-edge /usr/bin/google-chrome /usr/bin/chromium /usr/bin/chromium-browser /snap/bin/chromium; do
+            if command -v "$candidate" &>/dev/null; then
+                CHROME_BIN="$(command -v "$candidate")"
+                break
+            fi
+        done
+    fi
 
     if [ -n "$CHROME_BIN" ]; then
-        echo -e "\033[1;36m[+] Đang khởi động trình duyệt trên Linux (Cổng 9222): $CHROME_BIN\033[0m"
+        echo -e "\033[1;36m[+] Đang khởi động trình duyệt trên ${OS_NAME} (Cổng 9222): $CHROME_BIN\033[0m"
         nohup "$CHROME_BIN" \
             --remote-debugging-port=9222 \
             "--user-data-dir=$CHROME_PROFILE" \
@@ -140,8 +163,8 @@ if [ "$CDP_READY" = false ]; then
             "https://edux.cmcu.edu.vn/student" >/dev/null 2>&1 &
         sleep 2.5
     else
-        echo -e "\033[1;31m[X] Không tìm thấy Google Chrome hoặc Chromium trên Linux!\033[0m"
-        echo "Vui lòng cài đặt Google Chrome hoặc Chromium trước khi chạy."
+        echo -e "\033[1;31m[X] Không tìm thấy Google Chrome, Chromium, Brave hoặc Edge trên ${OS_NAME}!\033[0m"
+        echo "Vui lòng cài đặt Google Chrome hoặc Chromium vào /Applications (macOS) hoặc PATH (Linux) trước khi chạy."
         exit 1
     fi
 else
