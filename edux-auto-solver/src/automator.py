@@ -184,26 +184,63 @@ class EduxAutomator:
     def get_progress(self) -> Tuple[int, int]:
         try:
             res = self.page.evaluate("""() => {
-                const dialog = document.querySelector('div[role="dialog"][data-state="open"]')
-                    || document.querySelector('div[role="dialog"]')
-                    || document.querySelector('div.bg-white.rounded-lg, main')
-                    || document.body;
-                const text = dialog.innerText || '';
-                const m = text.match(/(\\d+)\\s*\\/\\s*(\\d+)\\s*câu/i);
-                if (m) {
-                    return { done: parseInt(m[1], 10), total: parseInt(m[2], 10) };
-                }
-                const buttons = Array.from(dialog.querySelectorAll('button')).filter(b => /^\\d+$/.test((b.innerText || '').trim()));
-                if (buttons.length === 0) return { done: 0, total: 0 };
-                const total = buttons.length;
-                let done = 0;
-                for (const b of buttons) {
-                    const cls = b.className || '';
-                    if (cls.includes('bg-primary') || cls.includes('bg-blue') || cls.includes('bg-emerald') || cls.includes('bg-green')) {
-                        done++;
+                const findRoot = () => {
+                    const openDlg = document.querySelector('div[role="dialog"][data-state="open"]');
+                    if (openDlg) return openDlg;
+                    const anyDlg = document.querySelector('div[role="dialog"]');
+                    if (anyDlg) return anyDlg;
+                    const mainEl = document.querySelector('main');
+                    if (mainEl && (/Câu\\s*\\d+/i.test(mainEl.innerText || '') || mainEl.querySelectorAll('button').length >= 2)) {
+                        return mainEl;
                     }
+                    const cards = Array.from(document.querySelectorAll('div.bg-white.rounded-lg'));
+                    const quizCard = cards.find(c => /(\\d+\\s*\\/\\s*\\d+\\s*câu|Câu\\s*\\d+)/i.test(c.innerText || ''));
+                    return quizCard || mainEl || document.body;
+                };
+
+                const extractFrom = (root) => {
+                    const text = root.innerText || '';
+                    const buttons = Array.from(root.querySelectorAll('button')).filter(b => /^\\d+$/.test((b.innerText || '').trim()));
+                    let doneFromBtns = 0;
+                    let maxBtn = 0;
+                    for (const b of buttons) {
+                        const n = parseInt((b.innerText || '').trim(), 10);
+                        if (n > maxBtn) maxBtn = n;
+                        const cls = b.className || '';
+                        if (cls.includes('bg-primary') || cls.includes('bg-blue') || cls.includes('bg-emerald') || cls.includes('bg-green')) {
+                            doneFromBtns++;
+                        }
+                    }
+
+                    let total = Math.max(buttons.length, maxBtn);
+                    let done = doneFromBtns;
+
+                    const m1 = text.match(/(\\d+)\\s*\\/\\s*(\\d+)\\s*câu/i);
+                    if (m1) {
+                        done = parseInt(m1[1], 10);
+                        total = Math.max(total, parseInt(m1[2], 10));
+                    } else {
+                        const m2 = text.match(/Câu\\s*\\d+\\s*\\/\\s*(\\d+)/i);
+                        if (m2) total = Math.max(total, parseInt(m2[1], 10));
+                        const m3 = text.match(/Tổng(?:\\s*số)?\\s*:?\\s*(\\d+)\\s*câu/i);
+                        if (m3) total = Math.max(total, parseInt(m3[1], 10));
+                    }
+
+                    const mUnans = text.match(/Câu hỏi chưa làm\\s*\\((\\d+)\\)/i);
+                    if (mUnans && total > 0) {
+                        const unansCount = parseInt(mUnans[1], 10);
+                        done = Math.max(done, Math.max(0, total - unansCount));
+                    }
+
+                    return { done, total };
+                };
+
+                const root = findRoot();
+                let result = extractFrom(root);
+                if (result.total === 0 && root !== document.body) {
+                    result = extractFrom(document.body);
                 }
-                return { done, total };
+                return result;
             }""")
             if res:
                 return int(res.get("done", 0)), int(res.get("total", 0))
@@ -287,7 +324,7 @@ class EduxAutomator:
                     return True
 
         # 3. Fallback: Bam nut 'Câu tiếp' / 'Tiếp' / 'Sau' hoac 'Câu trước' / 'Trước' bang JS
-        for _ in range(55):
+        for _ in range(max(55, target_num + 5)):
             curr = self.get_current_question_number()
             if curr == target_num:
                 self.page.wait_for_timeout(150)
@@ -790,8 +827,8 @@ class EduxAutomator:
                 || document.querySelector('div.bg-white.rounded-lg, main')
                 || document.body;
             const nextBtn = Array.from(dialog.querySelectorAll('button')).find(b => {
-                const t = (b.innerText || '').trim();
-                return t === 'Sau' || t.includes('Tiếp') || t.includes('Câu tiếp');
+                const t = (b.innerText || '').trim().toLowerCase();
+                return t === 'sau' || t === 'tiếp' || t === 'tiếp theo' || t.includes('tiếp') || t.includes('câu tiếp');
             });
             if (nextBtn && !nextBtn.disabled) {
                 nextBtn.click();

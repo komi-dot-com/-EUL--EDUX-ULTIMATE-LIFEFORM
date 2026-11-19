@@ -83,11 +83,18 @@ def run_solver_workflow(
     wait_and_start_quiz(automator)
 
     done_count, total_questions = automator.get_progress()
+    for _ in range(5):
+        if total_questions > 0:
+            break
+        time.sleep(0.3)
+        done_count, total_questions = automator.get_progress()
+
     if total_questions == 0:
         curr_q = automator.get_current_question_number()
         total_questions = max(curr_q, 20)
 
-    target_end = end_q if end_q and end_q > 0 else total_questions
+    has_explicit_end = bool(end_q and end_q > 0)
+    target_end = end_q if has_explicit_end else total_questions
     total_to_solve = max(1, target_end - start_q + 1)
 
     console.print(Panel(
@@ -115,6 +122,13 @@ def run_solver_workflow(
 
         automator.inject_anti_visibility()
         curr_q = automator.get_current_question_number()
+
+        if not has_explicit_end:
+            _, latest_total = automator.get_progress()
+            if latest_total > total_questions or curr_q > total_questions:
+                total_questions = max(total_questions, latest_total, curr_q)
+                target_end = total_questions
+                total_to_solve = max(1, target_end - start_q + 1)
 
         state.progress_current = curr_q
         state.progress_total = total_questions
@@ -189,13 +203,23 @@ def run_solver_workflow(
 
         time.sleep(0.3)
 
-        if curr_q >= target_end:
+        if has_explicit_end and curr_q >= target_end:
             console.print(f"[bold green][OK] Đã hoàn thành lượt chạy chính ({target_end} câu)![/bold green]")
             break
 
         # 4. Chuyển sang câu tiếp theo tuần tự (ưu tiên nút 'Câu tiếp' / 'Tiếp' để không vướng phân trang rút gọn)
         has_next = automator.next_question()
-        if not has_next:
+        if has_next:
+            if not has_explicit_end:
+                next_q = automator.get_current_question_number()
+                if next_q > total_questions:
+                    total_questions = next_q
+                    target_end = total_questions
+                    total_to_solve = max(1, target_end - start_q + 1)
+        else:
+            if curr_q >= target_end:
+                console.print(f"[bold green][OK] Đã hoàn thành lượt chạy chính ({target_end} câu)![/bold green]")
+                break
             jumped = automator.jump_to_question(curr_q + 1)
             if not jumped:
                 break
