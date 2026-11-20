@@ -3,7 +3,7 @@ chcp 65001 >nul
 setlocal EnableExtensions EnableDelayedExpansion
 
 :: =============================================================================
-::  EDUX ULTIMATE LIFEFORM v0.6 - SCRIPT KHỞI CHẠY DÀNH CHO WINDOWS
+::  EDUX ULTIMATE LIFEFORM v0.7 - SCRIPT KHỞI CHẠY DÀNH CHO WINDOWS
 ::  Công nghệ: AI Coding CLI (Antigravity / Codex) + CMCU-Vạn-Năng V3.2 FIX
 ::  Không cần Gemini API Key!
 :: =============================================================================
@@ -23,7 +23,7 @@ set "PATH=%APPDATA%\npm;%USERPROFILE%\.local\bin;%LOCALAPPDATA%\Programs\Antigra
 
 echo.
 echo ==========================================================================
-echo    EDUX ULTIMATE LIFEFORM v0.6 - KHỞI CHẠY TRÊN WINDOWS
+echo    EDUX ULTIMATE LIFEFORM v0.7 - KHỞI CHẠY TRÊN WINDOWS
 echo    AI Coding CLI (Antigravity ^& Codex) + CMCU-Vạn-Năng V3.2 FIX (3/3)
 echo ==========================================================================
 echo.
@@ -173,7 +173,7 @@ if not "%~1"=="" (
 :: 7. Hiển thị menu chọn chế độ (tương đồng với run.sh trên Linux)
 echo.
 echo Chọn chế độ điều khiển:
-echo   [1] Mở Công cụ CLI v0.6 (Terminal) + chạy ngầm Web Dashboard (Khuyên dùng)
+echo   [1] Mở Công cụ CLI v0.7 (Terminal) + chạy ngầm Web Dashboard (Khuyên dùng)
 echo   [2] Mở Web Dashboard (http://127.0.0.1:8765) trên trình duyệt
 echo   [3] Chạy ngay CMCU-Vạn-Năng V3.2 FIX trên Slide đang mở
 echo   [4] Giải ngay Bài tập đang mở bằng AI Coding CLI

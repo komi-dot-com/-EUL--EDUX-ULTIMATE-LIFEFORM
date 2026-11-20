@@ -21,7 +21,8 @@ from src.config import (
     CHROME_PROFILE_DIR,
     ALLOWED_DOMAINS,
     ENV_PATH,
-    detect_available_ai_tools
+    detect_available_ai_tools,
+    detect_antigravity_models
 )
 from src.utils import console, to_clean_ascii, is_allowed_domain, cleanup_chrome_cache_safe
 from src.storage import QuestionCache
@@ -772,10 +773,14 @@ def main_menu(automator: EduxAutomator, cache: QuestionCache, web_url: str = "ht
                 default=solver.provider if solver.provider in ["auto", "antigravity", "codex", "claude", "opencode"] else "auto"
             )
 
+            agy_models = detect_antigravity_models(force_refresh=True)
+            agy_hint = ", ".join(m["id"] for m in agy_models) if agy_models else (
+                "gemini-4-neon-medium, gemini-4-hydrogen-medium, gemini-4-argon-medium, gemini-3.8-flash-low, claude-sonnet-5-5-low"
+            )
             console.print(
-                "[dim]Gợi ý Model:\n"
-                "  • Cho Antigravity (agy): gemini-3.8-flash-low, gemini-3.8-flash-medium, gemini-4-argon-medium, claude-sonnet-5-5-low\n"
-                "  • Cho OpenAI Codex (codex): gpt-6-luna, default[/dim]"
+                f"[dim]Gợi ý Model:\n"
+                f"  • Antigravity (agy) phát hiện được: {agy_hint}\n"
+                f"  • OpenAI Codex (codex): gpt-6-luna, default[/dim]"
             )
             new_model = Prompt.ask("Nhập tên Model", default=solver.active_model).strip()
             new_effort = Prompt.ask("Mức độ suy luận (effort)", choices=["low", "medium", "high"], default=solver.effort)

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 =============================================================================
- EDUX ULTIMATE LIFEFORM (EUL) v0.6 - CMCU LMS (WEB DASHBOARD & CLI CONTROL CENTER)
+ EDUX ULTIMATE LIFEFORM (EUL) v0.7 - CMCU LMS (WEB DASHBOARD & CLI CONTROL CENTER)
  Công nghệ: Python + Playwright CDP + AI Coding CLI (Antigravity & Codex)
  Slide Engine: CMCU-Vạn-Năng V3.2 FIX (3/3 Confirm)
 =============================================================================
@@ -107,12 +107,12 @@ def get_active_edux_page(context, current_page=None):
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="EDUX ULTIMATE LIFEFORM (EUL) v0.6 - AI Coding CLI (Antigravity & Codex) + CMCU-Vạn-Năng V3.2 FIX"
+        description="EDUX ULTIMATE LIFEFORM (EUL) v0.7 - AI Coding CLI (Antigravity & Codex) + CMCU-Vạn-Năng V3.2 FIX"
     )
     parser.add_argument(
         "--cli",
         action="store_true",
-        help="Mở trực tiếp Bảng điều khiển CLI v0.6 trên Terminal"
+        help="Mở trực tiếp Bảng điều khiển CLI v0.7 trên Terminal"
     )
     parser.add_argument(
         "--web",
@@ -138,7 +138,7 @@ def parse_args():
     parser.add_argument(
         "--model",
         default=None,
-        help="Tên model AI sử dụng (VD: gemini-3.8-flash-low, gemini-4-argon-medium, gpt-6-luna)"
+        help="Tên model AI sử dụng (VD: gemini-4-neon-medium, gemini-4-hydrogen-medium, gemini-3.8-flash-low, gpt-6-luna)"
     )
     return parser.parse_args()
 
@@ -149,7 +149,7 @@ def main():
     console.clear()
     banner = """
     +--------------------------------------------------------------------------+
-    |             EDUX ULTIMATE LIFEFORM (EUL) v0.6 - CMCU LMS AUTONOMOUS            |
+    |             EDUX ULTIMATE LIFEFORM (EUL) v0.7 - CMCU LMS AUTONOMOUS            |
     |       AI Coding CLI (Antigravity & Codex) - Không cần Gemini API Key     |
     |           Slide Engine: CMCU-Vạn-Năng V3.2 FIX (3/3 End Confirm)         |
     +--------------------------------------------------------------------------+
@@ -255,11 +255,11 @@ def main():
         try:
             start_web_server(port=web_port)
             console.print(Panel(
-                f"[bold green]BẢNG ĐIỀU KHIỂN WEB DASHBOARD & CLI v0.6 ĐÃ SẴN SÀNG:[/bold green]\n"
+                f"[bold green]BẢNG ĐIỀU KHIỂN WEB DASHBOARD & CLI v0.7 ĐÃ SẴN SÀNG:[/bold green]\n"
                 f"- Địa chỉ Web Dashboard: [bold cyan]{dashboard_url}[/bold cyan]\n"
                 f"- AI Coding CLI: [bold magenta]{solver.get_status_summary()}[/bold magenta]\n"
                 f"- Slide Engine: [bold yellow]CMCU-Vạn-Năng-V3.2 FIX (3/3 Confirm)[/bold yellow]",
-                title="[EDUX ULTIMATE LIFEFORM (EUL) v0.6   ]",
+                title="[EDUX ULTIMATE LIFEFORM (EUL) v0.7   ]",
                 border_style="green"
             ))
 

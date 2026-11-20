@@ -8,7 +8,7 @@ from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse
 from typing import Dict, Any, Optional, List
 
-from src.config import ENV_PATH, DATA_DIR, AI_PROVIDER, AI_MODEL, AI_EFFORT, detect_available_ai_tools
+from src.config import ENV_PATH, DATA_DIR, AI_PROVIDER, AI_MODEL, AI_EFFORT, detect_available_ai_tools, get_all_available_models
 from src.utils import console
 
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
@@ -178,6 +178,7 @@ class WebDashboardHandler(BaseHTTPRequestHandler):
                 "ai_model": state.ai_model,
                 "ai_effort": state.ai_effort,
                 "available_tools": state.available_tools,
+                "available_models": get_all_available_models(),
                 "last_score": state.last_score,
                 "api_key_configured": True,
                 "history": state.history[:30],

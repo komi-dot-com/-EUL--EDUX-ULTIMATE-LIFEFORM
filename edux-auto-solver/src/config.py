@@ -1,6 +1,11 @@
 import os
+import re
 import shutil
+import subprocess
+import threading
+import time
 from pathlib import Path
+from typing import Dict, List
 
 try:
     from dotenv import load_dotenv
@@ -52,11 +57,28 @@ AI_EFFORT = os.getenv("AI_EFFORT", "low").strip().lower()
 # Giữ biến DEFAULT_MODEL và FALLBACK_MODELS để tương thích ngược nếu module khác import
 DEFAULT_MODEL = AI_MODEL
 FALLBACK_MODELS = [
+    "gemini-4-neon-low",
+    "gemini-4-neon-medium",
+    "gemini-4-neon-high",
+    "gemini-4-neon-xhigh",
+    "gemini-4-hydrogen-low",
+    "gemini-4-hydrogen-medium",
+    "gemini-4-hydrogen-high",
+    "gemini-4-hydrogen-xhigh",
+    "gemini-4-argon-low",
+    "gemini-4-argon-medium",
+    "gemini-4-argon-high",
     "gemini-3.8-flash-low",
     "gemini-3.8-flash-medium",
-    "gemini-4-argon-low",
+    "gemini-3.8-flash-high",
+    "claude-opus-5-5-low",
+    "claude-opus-5-5-medium",
+    "claude-opus-5-5-high",
+    "claude-sonnet-5-5-low",
+    "claude-sonnet-5-5-medium",
+    "claude-sonnet-5-5-high",
+    "gpt-oss-120b-medium",
     "gpt-6-luna",
-    "claude-sonnet-5-5-low"
 ]
 
 def detect_available_ai_tools() -> dict:
@@ -84,6 +106,72 @@ def detect_available_ai_tools() -> dict:
         if found:
             tools[name] = found
     return tools
+
+
+_MODELS_CACHE_LOCK = threading.Lock()
+_MODELS_CACHE: Dict[str, object] = {"ts": 0.0, "items": []}
+
+
+def detect_antigravity_models(force_refresh: bool = False) -> List[Dict[str, str]]:
+    """Tự động quét danh sách model mới nhất từ Antigravity CLI (`agy models`)."""
+    now = time.time()
+    with _MODELS_CACHE_LOCK:
+        cached = _MODELS_CACHE["items"]
+        cached_ts = float(_MODELS_CACHE["ts"])
+        if not force_refresh and cached_ts > 0 and (now - cached_ts) < 300:
+            return list(cached)  # type: ignore[arg-type]
+
+    tools = detect_available_ai_tools()
+    agy_bin = tools.get("antigravity")
+    detected: List[Dict[str, str]] = []
+
+    if agy_bin:
+        try:
+            proc = subprocess.run(
+                [agy_bin, "models"],
+                capture_output=True,
+                text=True,
+                timeout=8,
+                encoding="utf-8",
+                errors="replace",
+            )
+            if proc.returncode == 0 and proc.stdout:
+                for raw_line in proc.stdout.splitlines():
+                    clean = re.sub(r"\x1b\[[0-9;]*[mK]", "", raw_line).strip()
+                    if not clean or clean.lower().startswith("fetching"):
+                        continue
+                    m = re.match(r"^([a-z0-9][a-z0-9._-]+)\s+(.+)$", clean)
+                    if m:
+                        detected.append({"id": m.group(1).strip(), "label": m.group(2).strip()})
+                    elif re.match(r"^[a-z0-9][a-z0-9._-]+$", clean):
+                        detected.append({"id": clean, "label": clean})
+        except Exception:
+            pass
+
+    with _MODELS_CACHE_LOCK:
+        _MODELS_CACHE["ts"] = time.time()
+        _MODELS_CACHE["items"] = detected
+    return detected
+
+
+def get_all_available_models(force_refresh: bool = False) -> List[Dict[str, str]]:
+    """Trả về danh sách model đầy đủ (ưu tiên kết quả live từ `agy models`, gộp với danh sách dự phòng)."""
+    live = detect_antigravity_models(force_refresh=force_refresh)
+    seen = set()
+    merged: List[Dict[str, str]] = []
+
+    for item in live:
+        mid = item["id"]
+        if mid not in seen:
+            seen.add(mid)
+            merged.append(item)
+
+    for mid in FALLBACK_MODELS:
+        if mid not in seen:
+            seen.add(mid)
+            merged.append({"id": mid, "label": mid})
+
+    return merged
 
 ALLOWED_DOMAINS = [
     "edux.cmcu.edu.vn",
